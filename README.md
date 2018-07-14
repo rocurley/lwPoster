@@ -1,7 +1,7 @@
 # lwPoster
 ### Automatically post Less Wrong meetups
 
-`apis.py` has a function that will automatically post a Less Wrong meetup to:
+`apis.py` has a function `post` that will automatically post a Less Wrong meetup to:
 * lesswrong.com
 * facebook
 * The [SSC meetups repo](https://github.com/ssc-meetups-community/meetups)
