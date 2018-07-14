@@ -1,0 +1,72 @@
+mutation PostsNew($document: PostsInput) {
+  PostsNew(document: $document) {
+    ...PostsPage
+    __typename
+  }
+}
+
+fragment PostsPage on Post {
+  ...PostsList
+  body
+  htmlBody
+  __typename
+}
+
+fragment PostsList on Post {
+  _id
+  title
+  url
+  slug
+  postedAt
+  createdAt
+  sticky
+  status
+  excerpt
+  viewCount
+  clickCount
+  userId
+  user {
+    ...UsersMinimumInfo
+    __typename
+  }
+  thumbnailUrl
+  categories {
+    ...CategoriesMinimumInfo
+    __typename
+  }
+  commentCount
+  commenters {
+    ...UsersMinimumInfo
+    __typename
+  }
+  currentUserVotes {
+    ...VoteFragment
+    __typename
+  }
+  baseScore
+  score
+  __typename
+}
+
+fragment UsersMinimumInfo on User {
+  _id
+  slug
+  username
+  displayName
+  emailHash
+  __typename
+}
+
+fragment CategoriesMinimumInfo on Category {
+  _id
+  name
+  slug
+  __typename
+}
+
+fragment VoteFragment on Vote {
+  _id
+  voteType
+  power
+  __typename
+}
