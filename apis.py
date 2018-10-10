@@ -20,8 +20,12 @@ def load_boilerplate(config):
     if "phone" in location_config:
         phone = "%s (general meetup info at %s)" % (location_config["phone"],
                                                     phone)
+    if "instructions" in location_config:
+        instructions = location_config["instructions"] + "\n"
+    else:
+        instructions = ""
     with open("boilerplate") as f:
-        boilerplate = string.Template(f.read())
+        boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
 
@@ -63,7 +67,7 @@ def lw2_post_meetup(topic, config, public):
 
 def lw2_post_meetup_raw(lw_key, maps_key, title, body, location, date,
                         startTime, endTime, groupId, public):
-    with open("lw2_query.graphql") as query_file:
+    with open("./lib/lw2_query.graphql") as query_file:
         query = query_file.read()
 
     def format_time(time):
@@ -97,7 +101,7 @@ def lw2_post_meetup_raw(lw_key, maps_key, title, body, location, date,
             "location": googleLocation["formatted_address"],
             "googleLocation": googleLocation,
             "mongoLocation": mongoLocation,
-            "types": ["LW"],
+            "types": ["LW", "SSC"],
             "draft": not public,
             "title": title,
             "startTime": startTimeStr,
@@ -108,7 +112,7 @@ def lw2_post_meetup_raw(lw_key, maps_key, title, body, location, date,
     request = {
         "query": query,
         "variables": variables,
-        "operationName": "PostsNew"
+        "operationName": "createPost"
     }
     resp = requests.post(
         "https://www.lesswrong.com/graphql",
@@ -116,11 +120,11 @@ def lw2_post_meetup_raw(lw_key, maps_key, title, body, location, date,
         headers={"authorization": lw_key},
     )
     try:
-        post_id = resp.json()["data"]["PostsNew"]["_id"]
-    except KeyError:
+        post_id = resp.json()["data"]["createPost"]["data"]["_id"]
+    except (KeyError, TypeError):
         print("Unexpected response")
         print(resp.json())
-        raise KeyError
+        raise
     post_url = "https://www.lesswrong.com/events/%s" % post_id
     return post_url
 
