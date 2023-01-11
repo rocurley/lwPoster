@@ -28,12 +28,12 @@ def load_boilerplate(config):
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
-
-def next_meetup_date():
+def next_meetup_date(config={}):
     dt = datetime.datetime.now()
     d = dt.date()
     if dt.time() > datetime.time(hour=20):
-        d += datetime.timedelta(days=1)
+        day_number = config["weekday_number"]
+        d += datetime.timedelta(days=day_number)
     return next_weekday(d, 0)
 
 
@@ -44,7 +44,7 @@ def lw2_post_meetup(topic, config, public):
     lw_key = config["lw_key"]
     meetup_name = config["meetup_name"]
 
-    date = next_meetup_date()
+    date = next_meetup_date(config)
     startTime = datetime.time(18, 15)
     endTime = datetime.time(21, 00)
     boilerplate = load_boilerplate(config)
@@ -257,7 +257,7 @@ def next_weekday(d, weekday):
 
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
-    date = next_meetup_date()
+    date = next_meetup_date(config)
     meetup_name = config["meetup_name"]
     location = config["location"]
     boilerplate = load_boilerplate(config)
@@ -297,7 +297,7 @@ WHERE: %s
 
 
 def fb_post_meetup(topic, config, public=False):
-    date = next_meetup_date()
+    date = next_meetup_date(config)
     time = datetime.time(18, 15)
     meetup_name = config["fb_meetup_name"]
     if meetup_name == "":
