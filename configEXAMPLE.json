@@ -10,6 +10,8 @@
     "fb_meetup_name": "San Francisco Less Wrong Meetup",
     "meetup_name": "San Francisco Meetup",
     "phone":"Phone number, used for contacting the organizer",
+    "weekday_name": "Monday this field is just used to make config legible,  sunday is 0, monday 1, etc.",
+    "weekday_number": 1,
     "locations": {
         "Location Name":{
             "lat":37.771621,
