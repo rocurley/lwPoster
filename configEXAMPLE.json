@@ -1,17 +1,20 @@
 {
-"gmail_username": "Used to log in.",
-"lw_username": "Used to log in.",
-"email": "Used by SSC poster for contact info.",
-"fb_login_email": "Used to log in.",
-"lw_key":"You can get this from your cookies on lesswrong.com . Super annoying, but I haven't managed to automate login there. You'll need to refresh this every few months.",
-"group_id":"Looks like <qQkgmEeEreY6gjd7>, you can get it from the url of your group on lesswrong.",
-"maps_key":"API key for google maps. Needed to post to LW since they need some fancy geoencoding done clientside",
-"phone":"Phone number, used for contacting the organizer",
-"locations": {
-  "Location Name":{
-    "lat":37.771621,
-    "lon":-122.418445,
-    "str":"140 S Van Ness Ave, San Francisco, CA 94103-2519, United States"
-  }
-}
+    "gmail_username": "Used to log in.",
+    "email_group": "bayarealesswrong@googlegroups.com",
+    "lw_username": "Used to log in.",
+    "email": "Used by SSC poster for contact info.",
+    "fb_login_email": "Used to log in.",
+    "lw_key":"You can get this from your cookies on lesswrong.com . Super annoying, but I haven't managed to automate login there. You'll need to refresh this every few months.",
+    "group_id":"Looks like <qQkgmEeEreY6gjd7>, you can get it from the url of your group on lesswrong.",
+    "maps_key":"API key for google maps. Needed to post to LW since they need some fancy geoencoding done clientside",
+    "fb_meetup_name": "San Francisco Less Wrong Meetup",
+    "meetup_name": "San Francisco Meetup",
+    "phone":"Phone number, used for contacting the organizer",
+    "locations": {
+        "Location Name":{
+            "lat":37.771621,
+            "lon":-122.418445,
+            "str":"140 S Van Ness Ave, San Francisco, CA 94103-2519, United States"
+        }
+    }
 }
