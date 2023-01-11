@@ -322,7 +322,7 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
     msg.attach(part2)
 
     gmail = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    gmail.login("palmtree3000", getpass("Gmail password"))
+    gmail.login(gmail_username, getpass("Gmail password"))
     gmail.sendmail(fromaddr, toaddr, msg.as_string())
 
 
