@@ -34,7 +34,7 @@ def next_weekday(d, weekday):
 def load_boilerplate(config):
     phone = config.get("phone")
     location_config = config.get("location")
-    boilerplate_path = config.get("boilerplate_path") or "boilerplate"
+    boilerplate_path = config.get("boilerplate_path", "boilerplate.md")
     if "phone" in location_config:
         phone = "%s (general meetup info at %s)" % (location_config.get("phone"),
                                                     phone)
@@ -48,12 +48,12 @@ def load_boilerplate(config):
 
 def gen_body(topic, config):
     boilerplate = load_boilerplate(config)
-    with open("meetups/body/%s" % topic) as f:
+    with open("meetups/body/%s.md" % topic) as f:
         topic_text = f.read()
     return "%s\n%s" % (topic_text, boilerplate)
 
 def gen_title(topic, meetup_name):
-    with open("meetups/title/%s" % topic) as f:
+    with open("meetups/title/%s.md" % topic) as f:
         topic_title = f.read().strip()
     return "%s: %s" % (meetup_name, topic_title)
 
@@ -77,7 +77,7 @@ def lw2_post_meetup(topic, config, public):
     date = next_meetup_date(config)
     startTime = datetime.time(18, 15)
     endTime = datetime.time(21, 00)
-    with open("meetups/%s" % topic) as f:
+    with open("meetups/%s.md" % topic) as f:
         topic_text = f.read()
     return lw2_post_meetup_raw(
         lw_key,
@@ -277,7 +277,7 @@ def fb_post(fb_cookies,
 
 def email_pieces(topic, config):
     boilerplate = load_boilerplate(config)
-    with open("meetups/%s" % topic) as f:
+    with open("meetups/%s.md" % topic) as f:
         topic_text = f.read()
     date = next_meetup_date(config)
     location = config.get("location")
