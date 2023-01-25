@@ -469,3 +469,8 @@ def post(topic, host, public=True, skip=None, lw_url=None):
             toaddr = "%s@gmail.com" % gmail_username
         send_meetup_email(topic, config, gmail_username, toaddr)
         print("Email Sent")
+
+if __name__ == "__main__":
+    topic = input("enter topic name: ")
+    host = input("enter short name for location: ")
+    post(topic, host, skip={"fb": True})
