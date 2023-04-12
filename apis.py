@@ -28,12 +28,12 @@ def load_boilerplate(config):
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
-
-def next_meetup_date():
+def next_meetup_date(config={}):
     dt = datetime.datetime.now()
     d = dt.date()
     if dt.time() > datetime.time(hour=20):
-        d += datetime.timedelta(days=1)
+        day_number = config["weekday_number"]
+        d += datetime.timedelta(days=day_number)
     return next_weekday(d, 0)
 
 
@@ -42,14 +42,15 @@ def lw2_post_meetup(topic, config, public):
     group_id = config["group_id"]
     maps_key = config["maps_key"]
     lw_key = config["lw_key"]
+    meetup_name = config["meetup_name"]
 
-    date = next_meetup_date()
+    date = next_meetup_date(config)
     startTime = datetime.time(18, 15)
     endTime = datetime.time(21, 00)
     boilerplate = load_boilerplate(config)
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
-    title = "San Francisco Meetup: %s" % topic
+    title = "%s: %s" % (meetup_name, topic)
     body = "%s\n%s" % (topic_text, boilerplate)
     return lw2_post_meetup_raw(
         lw_key,
@@ -256,12 +257,13 @@ def next_weekday(d, weekday):
 
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
-    date = next_meetup_date()
+    date = next_meetup_date(config)
+    meetup_name = config["meetup_name"]
     location = config["location"]
     boilerplate = load_boilerplate(config)
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
-    email_title = "San Francisco Meetup: %s: %s" % (date.isoformat(), topic)
+    email_title = "%s: %s: %s" % (meetup_name, date.isoformat(), topic)
     when_str = date.strftime("%d %B %Y, 6:15 PM")
     plaintext_email = """WHEN: %s 
 WHERE: %s
@@ -295,15 +297,18 @@ WHERE: %s
 
 
 def fb_post_meetup(topic, config, public=False):
-    date = next_meetup_date()
+    date = next_meetup_date(config)
     time = datetime.time(18, 15)
+    meetup_name = config["fb_meetup_name"]
+    if meetup_name == "":
+        meetup_name = config["meetup_name"]
     location = config["location"]
     email = config["email"]
     fb_login_email = config["fb_login_email"]
     boilerplate = load_boilerplate(config)
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
-    title = "San Francisco Less Wrong Meetup: %s" % topic
+    title = "%s: %s" % (meetup_name, topic)
     description = "%s\n%s" % (topic_text, boilerplate)
     fb_cookies = fb_login(fb_login_email)
     fb_dstg = fb_get_dstg(fb_cookies)
@@ -416,7 +421,8 @@ def post(topic, host, public=True, skip=None, lw_url=None):
     if "email" not in skip:
         gmail_username = config["gmail_username"]
         if public:
-            toaddr = "bayarealesswrong@googlegroups.com"
+            email_group = config["email_group"]
+            toaddr = email_group
         else:
             toaddr = "%s@gmail.com" % gmail_username
         send_meetup_email(topic, config, gmail_username, toaddr)
