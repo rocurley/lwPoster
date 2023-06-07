@@ -41,26 +41,33 @@ def next_meetup_date_testable(config, dt):
     return next_weekday(d, day_number)
 
 
+def lw2_title(topic, config):
+    title = "%s: %s" % (config["meetup_name"], topic)
+    return title
+
+def lw2_body(topic, config):
+    boilerplate = load_boilerplate(config)
+    with open("meetups/%s" % topic) as f:
+        topic_text = f.read()
+    body = "%s\n%s" % (topic_text, boilerplate)
+    return body
+
 def lw2_post_meetup(topic, config, public):
     location = config["location"]
     group_id = config["group_id"]
     maps_key = config["maps_key"]
     lw_key = config["lw_key"]
-    meetup_name = config["meetup_name"]
 
     date = next_meetup_date(config)
     startTime = datetime.time(18, 15)
     endTime = datetime.time(21, 00)
-    boilerplate = load_boilerplate(config)
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
-    title = "%s: %s" % (meetup_name, topic)
-    body = "%s\n%s" % (topic_text, boilerplate)
     return lw2_post_meetup_raw(
         lw_key,
         maps_key,
-        title,
-        body,
+        lw2_title(topic, config),
+        lw2_body(topic, config),
         location["str"],
         date,
         startTime,
@@ -68,7 +75,6 @@ def lw2_post_meetup(topic, config, public):
         group_id,
         public,
     )
-
 
 def lw2_post_meetup_raw(lw_key, maps_key, title, body, location, date,
                         startTime, endTime, groupId, public):
