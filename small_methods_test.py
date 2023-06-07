@@ -38,8 +38,8 @@ class TestNextMeetup(unittest.TestCase):
         tuesday_noon = datetime.datetime(2023, 5, 2, 12, 0, 0) # May 2 2023 is a Tuesday
         next_monday = datetime.date(2023, 5, 8)
         self.assertEqual(
-                apis.next_meetup_date_testable({"weekday_number": 0}, tuesday_noon),
-                next_monday
+            apis.next_meetup_date_testable({"weekday_number": 0}, tuesday_noon),
+            next_monday
         )
         print("correct day in next week")
 
@@ -47,8 +47,8 @@ class TestNextMeetup(unittest.TestCase):
         tuesday_noon = datetime.datetime(2023, 5, 2, 12, 0, 0) # May 2 2023 is a Tuesday
         saturday = datetime.date(2023, 5, 6)
         self.assertEqual(
-                apis.next_meetup_date_testable({"weekday_number": 5}, tuesday_noon),
-                saturday
+            apis.next_meetup_date_testable({"weekday_number": 5}, tuesday_noon),
+            saturday
         )
         print("correct day later in week")
 
@@ -56,8 +56,8 @@ class TestNextMeetup(unittest.TestCase):
         tuesday_night = datetime.datetime(2023, 5, 2, 20, 1, 0) # May 2 2023 is a Tuesday
         next_tuesday = datetime.date(2023, 5, 9)
         self.assertEqual(
-                apis.next_meetup_date_testable({"weekday_number": 1}, tuesday_night),
-                next_tuesday
+            apis.next_meetup_date_testable({"weekday_number": 1}, tuesday_night),
+            next_tuesday
         )
         print("correct day in next week")
 
@@ -65,8 +65,8 @@ class TestNextMeetup(unittest.TestCase):
         tuesday_noon = datetime.datetime(2023, 5, 2, 10, 0, 0) # May 2 2023 is a Tuesday
         this_tuesday = datetime.date(2023, 5, 2)
         self.assertEqual(
-                apis.next_meetup_date_testable({"weekday_number": 1}, tuesday_noon),
-                this_tuesday
+            apis.next_meetup_date_testable({"weekday_number": 1}, tuesday_noon),
+            this_tuesday
         )
         print("correct day, i.e. today")
 
