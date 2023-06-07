@@ -267,6 +267,26 @@ def fb_post(fb_cookies,
         allow_redirects=False)
 
 
+def _email_plaintext(time_str, loc_str, topic_text, boilerplate):
+    return """WHEN: %s
+WHERE: %s
+
+%s
+%s
+    """ % (time_str, loc_str, topic_text, boilerplate)
+
+def _email_html(time_str, loc_str, topic_text, boilerplate):
+    return markdown.markdown("""**WHEN:** %s
+
+**WHERE:** %s
+
+%s
+%s
+    """ % (time_str, loc_str, topic_text, boilerplate))
+
+def _email_title(topic, config, date_obj):
+    return "%s: %s: %s" % (config["meetup_name"], date_obj.isoformat(), topic)
+
 def send_meetup_email(topic, config, gmail_username, toaddr):
     date = next_meetup_date(config)
     meetup_name = config["meetup_name"]
