@@ -18,12 +18,10 @@ def next_meetup_date(config={}):
     return next_meetup_date_testable(config, datetime.datetime.now())
 
 def next_meetup_date_testable(config, dt):
-    print("day time (now): ", dt)
     d = dt.date()
     if dt.time() > datetime.time(hour=18): # if it's 6 PM or later
         d += datetime.timedelta(days=1) # then don't schedule it for today
     day_number = config.get("weekday_number", 0)
-    print("day number: %n", day_number)
     return next_weekday(d, day_number)
 
 
@@ -265,7 +263,6 @@ def fb_post(fb_cookies,
 
 def next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
-    print("meetup day is %s days ahead" % days_ahead)
     if days_ahead < 0:  # Target day already happened this week
         days_ahead += 7
     return d + datetime.timedelta(days_ahead)
