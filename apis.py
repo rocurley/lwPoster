@@ -251,6 +251,7 @@ def fb_post(fb_cookies,
 
 def next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
+    print("meetup day is %s days ahead" % days_ahead)
     if days_ahead < 0:  # Target day already happened this week
         days_ahead += 7
     return d + datetime.timedelta(days_ahead)
