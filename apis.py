@@ -24,6 +24,12 @@ def next_meetup_date_testable(config, dt):
     day_number = config.get("weekday_number", 0)
     return next_weekday(d, day_number)
 
+def next_weekday(d, weekday):
+    days_ahead = weekday - d.weekday()
+    if days_ahead < 0:  # Target day already happened this week
+        days_ahead += 7
+    return d + datetime.timedelta(days_ahead)
+
 
 def load_boilerplate(config):
     phone = config["phone"]
@@ -259,13 +265,6 @@ def fb_post(fb_cookies,
         data=form_data_payload,
         cookies=fb_cookies,
         allow_redirects=False)
-
-
-def next_weekday(d, weekday):
-    days_ahead = weekday - d.weekday()
-    if days_ahead < 0:  # Target day already happened this week
-        days_ahead += 7
-    return d + datetime.timedelta(days_ahead)
 
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
