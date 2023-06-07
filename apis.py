@@ -267,6 +267,18 @@ def fb_post(fb_cookies,
         allow_redirects=False)
 
 
+def email_pieces(topic, config):
+    boilerplate = load_boilerplate(config)
+    with open("meetups/%s" % topic) as f:
+        topic_text = f.read()
+    date = next_meetup_date(config)
+    location = config["location"]
+    when_str = date.strftime("%d %B %Y, 6:15 PM")
+    plain_email = _email_plaintext(when_str, location["str"], topic_text, boilerplate)
+    html_email = _email_html(when_str, location["str"], topic_text, boilerplate)
+    email_title = _email_title(topic, config, date)
+    return (email_title, plain_email, html_email)
+
 def _email_plaintext(time_str, loc_str, topic_text, boilerplate):
     return """WHEN: %s
 WHERE: %s
@@ -288,16 +300,7 @@ def _email_title(topic, config, date_obj):
     return "%s: %s: %s" % (config["meetup_name"], date_obj.isoformat(), topic)
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
-    date = next_meetup_date(config)
-    meetup_name = config["meetup_name"]
-    location = config["location"]
-    boilerplate = load_boilerplate(config)
-    with open("meetups/%s" % topic) as f:
-        topic_text = f.read()
-    email_title = _email_title(topic, config, date)
-    when_str = date.strftime("%d %B %Y, 6:15 PM")
-    plaintext_email = _email_plaintext(when_str, location["str"], topic_text, boilerplate)
-    html_email = _email_html(when_str, location["str"], topic_text, boilerplate)
+    email_title, plaintext_email, html_email = email_pieces(topic, config)
 
     fromaddr = "%s@gmail.com" % gmail_username
 
