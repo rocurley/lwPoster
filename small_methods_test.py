@@ -79,13 +79,26 @@ class TestLWFormatting(unittest.TestCase):
             "instructions": "Buzz for H. Celine or enter code 893",
             "phone": "555 987 6543"
         },
-        "meetup_name": "LW For Dummy"
+        "meetup_name": "LW For Dummy",
+        "boilerplate_path": "test_boilerplate"
     }
 
     def test_gen_title(self):
         self.assertEqual(
             apis.lw2_title("reading", self.default_config),
             "LW For Dummy: Reading & Discussion"
+        )
+
+    def test_gen_body(self):
+        expected_boilerplate = """
+Buzz for H. Celine or enter code 893
+Entrance call: 555 987 6543 (general meetup info at 555 123 4567).
+Format: Doors 6:15, Topic Start: 6:45
+About: Some structure.
+"""
+        self.assertEqual(
+            apis.lw2_body("test_topic", self.default_config),
+            "This is a test topic.\n"+expected_boilerplate
         )
 
 if __name__ == '__main__':

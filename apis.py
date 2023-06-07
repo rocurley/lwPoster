@@ -30,6 +30,7 @@ def next_meetup_date_testable(config, dt):
 def load_boilerplate(config):
     phone = config["phone"]
     location_config = config["location"]
+    boilerplate_path = config.get("boilerplate_path") or "boilerplate"
     if "phone" in location_config:
         phone = "%s (general meetup info at %s)" % (location_config["phone"],
                                                     phone)
@@ -37,7 +38,7 @@ def load_boilerplate(config):
         instructions = location_config["instructions"] + "\n"
     else:
         instructions = ""
-    with open("boilerplate") as f:
+    with open(boilerplate_path) as f:
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
