@@ -301,17 +301,16 @@ def _email_title(topic, config, date_obj):
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
     email_title, plaintext_email, html_email = email_pieces(topic, config)
+    msg = MIMEMultipart("alternative")
 
     fromaddr = "%s@gmail.com" % gmail_username
-
-    part1 = MIMEText(plaintext_email, "plain")
-    part2 = MIMEText(html_email, "html")
-
-    msg = MIMEMultipart("alternative")
     msg["Subject"] = email_title
     msg["From"] = fromaddr
     msg["To"] = toaddr
+
+    part1 = MIMEText(plaintext_email, "plain")
     msg.attach(part1)
+    part2 = MIMEText(html_email, "html")
     msg.attach(part2)
 
     gmail = smtplib.SMTP_SSL("smtp.gmail.com", 465)
