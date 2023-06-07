@@ -294,21 +294,10 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
     boilerplate = load_boilerplate(config)
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
-    email_title = "%s: %s: %s" % (meetup_name, date.isoformat(), topic)
+    email_title = _email_title(topic, config, date)
     when_str = date.strftime("%d %B %Y, 6:15 PM")
-    plaintext_email = """WHEN: %s 
-WHERE: %s
-
-%s
-%s
-    """ % (when_str, location["str"], topic_text, boilerplate)
-    html_email = markdown.markdown("""**WHEN:** %s
-
-**WHERE:** %s
-
-%s
-%s
-    """ % (when_str, location["str"], topic_text, boilerplate))
+    plaintext_email = _email_plaintext(when_str, location["str"], topic_text, boilerplate)
+    html_email = _email_html(when_str, location["str"], topic_text, boilerplate)
 
     fromaddr = "%s@gmail.com" % gmail_username
 
