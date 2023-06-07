@@ -70,5 +70,20 @@ class TestNextMeetup(unittest.TestCase):
         )
         print("correct day, i.e. today")
 
+class TestLWFormatting(unittest.TestCase):
+
+    default_config = {
+        "phone": "555 123 4567",
+        "location":
+        {
+            "instructions": "Buzz for H. Celine or enter code 893",
+            "phone": "555 987 6543"
+        },
+        "meetup_name": "LW For Dummy"
+    }
+
+    def test_gen_title(self):
+        self.assertEqual(apis.lw2_title("reading", self.default_config), "LW For Dummy: reading")
+
 if __name__ == '__main__':
     unittest.main()

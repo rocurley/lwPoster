@@ -14,6 +14,19 @@ import urllib.request, urllib.parse, urllib.error
 from subprocess import Popen, PIPE
 
 
+def next_meetup_date(config={}):
+    return next_meetup_date_testable(config, datetime.datetime.now())
+
+def next_meetup_date_testable(config, dt):
+    print("day time (now): ", dt)
+    d = dt.date()
+    if dt.time() > datetime.time(hour=18): # if it's 6 PM or later
+        d += datetime.timedelta(days=1) # then don't schedule it for today
+    day_number = config.get("weekday_number", 0)
+    print("day number: %n", day_number)
+    return next_weekday(d, day_number)
+
+
 def load_boilerplate(config):
     phone = config["phone"]
     location_config = config["location"]
@@ -27,18 +40,6 @@ def load_boilerplate(config):
     with open("boilerplate") as f:
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
-
-def next_meetup_date(config={}):
-    return next_meetup_date_testable(config, datetime.datetime.now())
-
-def next_meetup_date_testable(config, dt):
-    print("day time (now): ", dt)
-    d = dt.date()
-    if dt.time() > datetime.time(hour=18): # if it's 6 PM or later
-        d += datetime.timedelta(days=1) # then don't schedule it for today
-    day_number = config.get("weekday_number", 0)
-    print("day number: %n", day_number)
-    return next_weekday(d, day_number)
 
 
 def lw2_title(topic, config):
