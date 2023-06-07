@@ -1,6 +1,7 @@
 import unittest
 import datetime
 import apis
+import json
 
 
 class TestNextWeekday(unittest.TestCase):
@@ -68,11 +69,10 @@ class TestNextMeetup(unittest.TestCase):
             apis.next_meetup_date_testable({"weekday_number": 1}, tuesday_noon),
             this_tuesday
         )
-        print("correct day, i.e. today")
 
 class TestLWFormatting(unittest.TestCase):
 
-    default_config = {
+    test_config = {
         "phone": "555 123 4567",
         "location":
         {
@@ -85,7 +85,7 @@ class TestLWFormatting(unittest.TestCase):
 
     def test_gen_title(self):
         self.assertEqual(
-            apis.lw2_title("reading", self.default_config),
+            apis.lw2_title("reading", self.test_config),
             "LW For Dummy: Reading & Discussion"
         )
 
@@ -97,9 +97,24 @@ Format: Doors 6:15, Topic Start: 6:45
 About: Some structure.
 """
         self.assertEqual(
-            apis.lw2_body("test_topic", self.default_config),
+            apis.lw2_body("test_topic", self.test_config),
             "This is a test topic.\n"+expected_boilerplate
         )
+
+    def test_gen_real_body(self):
+        # Make this more like a real config
+        config = json.loads(json.dumps(self.test_config))
+        del config["boilerplate_path"]
+        del config["location"]["phone"]
+        config["phone"] = "${phone}"
+
+        with open("meetups/body/reading") as f:
+            topic_text = f.read()
+        with open("boilerplate") as f:
+            boilerplate = f.read()
+        expected = topic_text+"\n"+config["location"]["instructions"]+"\n"+boilerplate
+        self.maxDiff = None
+        self.assertEqual(apis.lw2_body("reading", config), expected)
 
 if __name__ == '__main__':
     unittest.main()
