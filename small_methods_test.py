@@ -83,7 +83,10 @@ class TestLWFormatting(unittest.TestCase):
     }
 
     def test_gen_title(self):
-        self.assertEqual(apis.lw2_title("reading", self.default_config), "LW For Dummy: reading")
+        self.assertEqual(
+            apis.lw2_title("reading", self.default_config),
+            "LW For Dummy: Reading & Discussion"
+        )
 
 if __name__ == '__main__':
     unittest.main()

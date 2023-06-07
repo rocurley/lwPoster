@@ -43,12 +43,14 @@ def load_boilerplate(config):
 
 
 def lw2_title(topic, config):
-    title = "%s: %s" % (config["meetup_name"], topic)
+    with open("meetups/title/%s" % topic) as f:
+        topic_title = f.read().strip()
+    title = "%s: %s" % (config["meetup_name"], topic_title)
     return title
 
 def lw2_body(topic, config):
     boilerplate = load_boilerplate(config)
-    with open("meetups/%s" % topic) as f:
+    with open("meetups/body/%s" % topic) as f:
         topic_text = f.read()
     body = "%s\n%s" % (topic_text, boilerplate)
     return body
