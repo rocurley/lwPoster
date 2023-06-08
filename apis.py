@@ -50,8 +50,7 @@ def load_boilerplate(config):
 def lw2_title(topic, config):
     with open("meetups/title/%s" % topic) as f:
         topic_title = f.read().strip()
-    title = "%s: %s" % (config["meetup_name"], topic_title)
-    return title
+    return "%s: %s" % (config["meetup_name"], topic_title)
 
 def lw2_body(topic, config):
     boilerplate = load_boilerplate(config)
@@ -317,13 +316,17 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
     gmail.login("palmtree3000", getpass("Gmail password"))
     gmail.sendmail(fromaddr, toaddr, msg.as_string())
 
+def fb_title(topic, config):
+    meetup_name = config.get("fb_meetup_name", "")
+    if meetup_name == "":
+        meetup_name = config["meetup_name"]
+    with open("meetups/title/%s" % topic) as f:
+        topic_title = f.read().strip()
+    return "%s: %s" % (meetup_name, topic_title)
 
 def fb_meetup_attrs(topic, config):
     date = next_meetup_date(config)
     time = datetime.time(18, 15)
-    meetup_name = config.get("fb_meetup_name", "")
-    if meetup_name == "":
-        meetup_name = config["meetup_name"]
     location = config["location"]
     fb_login_email = config.get("fb_login_email", "")
     if fb_login_email == "":
@@ -331,7 +334,7 @@ def fb_meetup_attrs(topic, config):
     boilerplate = load_boilerplate(config)
     with open("meetups/body/%s" % topic) as f:
         topic_text = f.read()
-    title = "%s: %s" % (meetup_name, topic)
+    title = fb_title(topic, config)
     description = "%s\n%s" % (topic_text, boilerplate)
     return (fb_login_email, title, description, location, date, time)
 
