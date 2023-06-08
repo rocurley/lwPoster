@@ -109,5 +109,30 @@ About: Some structure.
         self.maxDiff = None
         self.assertEqual(apis.lw2_body("reading", config), expected)
 
+class TestFBFormatting(unittest.TestCase):
+
+    test_config = {
+        "phone": "555 123 4567",
+        "location":
+        {
+            "instructions": "Buzz for H. Celine or enter code 893",
+            "phone": "555 987 6543"
+        },
+        "email": "dummy@gmail.com",
+        "fb_login_email": "dummy@gmail.com",
+        "meetup_name": "LW For Dummy",
+        "boilerplate_path": "test_boilerplate"
+    }
+
+    def test_titles(self):
+        fuller_config = json.loads(json.dumps(self.test_config))
+        fuller_config["fb_meetup_name"] = "Real LW Meetup",
+        _, _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", fuller_config)
+        self.assertEqual(title, "Real LW Meetup")
+        _, _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", test_config)
+        self.assertEqual(title, "LW Meetup For Dummy")
+
+
+
 if __name__ == '__main__':
     unittest.main()
