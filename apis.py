@@ -52,11 +52,14 @@ def gen_body(topic, config):
         topic_text = f.read()
     return "%s\n%s" % (topic_text, boilerplate)
 
-
-def lw2_title(topic, config):
+def gen_title(topic, meetup_name):
     with open("meetups/title/%s" % topic) as f:
         topic_title = f.read().strip()
-    return "%s: %s" % (config["meetup_name"], topic_title)
+    return "%s: %s" % (meetup_name, topic_title)
+
+
+def lw2_title(topic, config):
+    return gen_title(topic, config["meetup_name"])
 
 def lw2_body(topic, config):
     return gen_body(topic, config)
@@ -322,9 +325,7 @@ def fb_title(topic, config):
     meetup_name = config.get("fb_meetup_name", "")
     if meetup_name == "":
         meetup_name = config["meetup_name"]
-    with open("meetups/title/%s" % topic) as f:
-        topic_title = f.read().strip()
-    return "%s: %s" % (meetup_name, topic_title)
+    return gen_title(topic, meetup_name)
 
 def fb_body(topic, config):
     return gen_body(topic, config)
