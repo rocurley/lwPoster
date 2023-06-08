@@ -61,6 +61,7 @@ def gen_title_with_date(topic, meetup_name, date_str):
     return "%s: %s: %s" % (config["meetup_name"], date_str, topic)
 
 
+
 def lw2_title(topic, config):
     return gen_title(topic, config["meetup_name"])
 
