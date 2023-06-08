@@ -14,9 +14,27 @@ import urllib.request, urllib.parse, urllib.error
 from subprocess import Popen, PIPE
 
 
+def next_meetup_date(config={}):
+    return next_meetup_date_testable(config, datetime.datetime.now())
+
+def next_meetup_date_testable(config, dt):
+    d = dt.date()
+    if dt.time() > datetime.time(hour=18): # if it's 6 PM or later
+        d += datetime.timedelta(days=1) # then don't schedule it for today
+    day_number = config.get("weekday_number", 0)
+    return next_weekday(d, day_number)
+
+def next_weekday(d, weekday):
+    days_ahead = weekday - d.weekday()
+    if days_ahead < 0:  # Target day already happened this week
+        days_ahead += 7
+    return d + datetime.timedelta(days_ahead)
+
+
 def load_boilerplate(config):
     phone = config["phone"]
     location_config = config["location"]
+    boilerplate_path = config.get("boilerplate_path") or "boilerplate"
     if "phone" in location_config:
         phone = "%s (general meetup info at %s)" % (location_config["phone"],
                                                     phone)
@@ -24,39 +42,48 @@ def load_boilerplate(config):
         instructions = location_config["instructions"] + "\n"
     else:
         instructions = ""
-    with open("boilerplate") as f:
+    with open(boilerplate_path) as f:
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
-def next_meetup_date(config={}):
-    dt = datetime.datetime.now()
-    d = dt.date()
-    if dt.time() > datetime.time(hour=20):
-        day_number = config["weekday_number"]
-        d += datetime.timedelta(days=day_number)
-    return next_weekday(d, 0)
+def gen_body(topic, config):
+    boilerplate = load_boilerplate(config)
+    with open("meetups/body/%s" % topic) as f:
+        topic_text = f.read()
+    return "%s\n%s" % (topic_text, boilerplate)
 
+def gen_title(topic, meetup_name):
+    with open("meetups/title/%s" % topic) as f:
+        topic_title = f.read().strip()
+    return "%s: %s" % (meetup_name, topic_title)
+
+def gen_title_with_date(topic, meetup_name, date_str):
+    return "%s: %s: %s" % (config["meetup_name"], date_str, topic)
+
+
+
+def lw2_title(topic, config):
+    return gen_title(topic, config["meetup_name"])
+
+def lw2_body(topic, config):
+    return gen_body(topic, config)
 
 def lw2_post_meetup(topic, config, public):
     location = config["location"]
     group_id = config["group_id"]
     maps_key = config["maps_key"]
     lw_key = config["lw_key"]
-    meetup_name = config["meetup_name"]
 
     date = next_meetup_date(config)
     startTime = datetime.time(18, 15)
     endTime = datetime.time(21, 00)
-    boilerplate = load_boilerplate(config)
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
-    title = "%s: %s" % (meetup_name, topic)
-    body = "%s\n%s" % (topic_text, boilerplate)
     return lw2_post_meetup_raw(
         lw_key,
         maps_key,
-        title,
-        body,
+        lw2_title(topic, config),
+        lw2_body(topic, config),
         location["str"],
         date,
         startTime,
@@ -64,7 +91,6 @@ def lw2_post_meetup(topic, config, public):
         group_id,
         public,
     )
-
 
 def lw2_post_meetup_raw(lw_key, maps_key, title, body, location, date,
                         startTime, endTime, groupId, public):
@@ -249,46 +275,50 @@ def fb_post(fb_cookies,
         allow_redirects=False)
 
 
-def next_weekday(d, weekday):
-    days_ahead = weekday - d.weekday()
-    if days_ahead < 0:  # Target day already happened this week
-        days_ahead += 7
-    return d + datetime.timedelta(days_ahead)
-
-
-def send_meetup_email(topic, config, gmail_username, toaddr):
-    date = next_meetup_date(config)
-    meetup_name = config["meetup_name"]
-    location = config["location"]
+def email_pieces(topic, config):
     boilerplate = load_boilerplate(config)
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
-    email_title = "%s: %s: %s" % (meetup_name, date.isoformat(), topic)
+    date = next_meetup_date(config)
+    location = config["location"]
     when_str = date.strftime("%d %B %Y, 6:15 PM")
-    plaintext_email = """WHEN: %s 
+    plain_email = _email_plaintext(when_str, location["str"], topic_text, boilerplate)
+    html_email = _email_html(when_str, location["str"], topic_text, boilerplate)
+    email_title = _email_title(topic, config, date)
+    return (email_title, plain_email, html_email)
+
+def _email_plaintext(time_str, loc_str, topic_text, boilerplate):
+    return """WHEN: %s
 WHERE: %s
 
 %s
 %s
-    """ % (when_str, location["str"], topic_text, boilerplate)
-    html_email = markdown.markdown("""**WHEN:** %s
+    """ % (time_str, loc_str, topic_text, boilerplate)
+
+def _email_html(time_str, loc_str, topic_text, boilerplate):
+    return markdown.markdown("""**WHEN:** %s
 
 **WHERE:** %s
 
 %s
 %s
-    """ % (when_str, location["str"], topic_text, boilerplate))
+    """ % (time_str, loc_str, topic_text, boilerplate))
+
+def _email_title(topic, config, date_obj):
+    return gen_title_with_date(topic, config["meetup_name"], date_obj.isoformat())
+
+def send_meetup_email(topic, config, gmail_username, toaddr):
+    email_title, plaintext_email, html_email = email_pieces(topic, config)
+    msg = MIMEMultipart("alternative")
 
     fromaddr = "%s@gmail.com" % gmail_username
-
-    part1 = MIMEText(plaintext_email, "plain")
-    part2 = MIMEText(html_email, "html")
-
-    msg = MIMEMultipart("alternative")
     msg["Subject"] = email_title
     msg["From"] = fromaddr
     msg["To"] = toaddr
+
+    part1 = MIMEText(plaintext_email, "plain")
     msg.attach(part1)
+    part2 = MIMEText(html_email, "html")
     msg.attach(part2)
 
     gmail = smtplib.SMTP_SSL("smtp.gmail.com", 465)
@@ -296,21 +326,33 @@ WHERE: %s
     gmail.sendmail(fromaddr, toaddr, msg.as_string())
 
 
-def fb_post_meetup(topic, config, public=False):
-    date = next_meetup_date(config)
-    time = datetime.time(18, 15)
-    meetup_name = config["fb_meetup_name"]
+def fb_title(topic, config):
+    meetup_name = config.get("fb_meetup_name", "")
     if meetup_name == "":
         meetup_name = config["meetup_name"]
+    return gen_title(topic, meetup_name)
+
+def fb_email(config):
+    fb_login_email = config.get("fb_login_email", "")
+    if fb_login_email == "":
+        fb_login_email = config["email"]
+    return fb_login_email
+
+def fb_body(topic, config):
+    return gen_body(topic, config)
+
+def fb_meetup_attrs(topic, config):
+    date = next_meetup_date(config)
+    time = datetime.time(18, 15)
     location = config["location"]
-    email = config["email"]
-    fb_login_email = config["fb_login_email"]
-    boilerplate = load_boilerplate(config)
-    with open("meetups/%s" % topic) as f:
-        topic_text = f.read()
-    title = "%s: %s" % (meetup_name, topic)
-    description = "%s\n%s" % (topic_text, boilerplate)
-    fb_cookies = fb_login(fb_login_email)
+    return (
+        fb_email(config), fb_title(topic, config), fb_body(topic, config),
+        location, date, time
+    )
+
+def fb_post_meetup(topic, config, public=False):
+    fb_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
+    fb_cookies = fb_login(fb_email)
     fb_dstg = fb_get_dstg(fb_cookies)
     res = fb_post(
         fb_cookies,
