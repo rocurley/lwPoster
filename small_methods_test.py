@@ -125,12 +125,12 @@ class TestFBFormatting(unittest.TestCase):
     }
 
     def test_titles(self):
+        _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", self.test_config)
+        self.assertEqual(title, "LW For Dummy: reading")
         fuller_config = json.loads(json.dumps(self.test_config))
-        fuller_config["fb_meetup_name"] = "Real LW Meetup",
-        _, _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", fuller_config)
-        self.assertEqual(title, "Real LW Meetup")
-        _, _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", test_config)
-        self.assertEqual(title, "LW Meetup For Dummy")
+        fuller_config["fb_meetup_name"] = "Real LW Meetup"
+        _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", fuller_config)
+        self.assertEqual(title, "Real LW Meetup: reading")
 
 
 

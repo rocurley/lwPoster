@@ -321,23 +321,24 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
 def fb_meetup_attrs(topic, config):
     date = next_meetup_date(config)
     time = datetime.time(18, 15)
-    meetup_name = config["fb_meetup_name"]
+    meetup_name = config.get("fb_meetup_name", "")
     if meetup_name == "":
         meetup_name = config["meetup_name"]
     location = config["location"]
-    email = config["email"]
-    fb_login_email = config["fb_login_email"]
+    fb_login_email = config.get("fb_login_email", "")
+    if fb_login_email == "":
+        fb_login_email = config["email"]
     boilerplate = load_boilerplate(config)
     with open("meetups/body/%s" % topic) as f:
         topic_text = f.read()
     title = "%s: %s" % (meetup_name, topic)
     description = "%s\n%s" % (topic_text, boilerplate)
-    fb_cookies = fb_login(fb_login_email)
-    fb_dstg = fb_get_dstg(fb_cookies)
-    return (fb_cookies, fb_dstg, title, description, location, date, time)
+    return (fb_login_email, title, description, location, date, time)
 
 def fb_post_meetup(topic, config, public=False):
-    fb_cookies, fb_dstg, title, description, location, date, time = fb_meetup_attrs(topic, config)
+    fb_login_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
+    fb_cookies = fb_login(fb_login_email)
+    fb_dstg = fb_get_dstg(fb_cookies)
     res = fb_post(
         fb_cookies,
         fb_dstg,
