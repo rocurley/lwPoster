@@ -63,6 +63,33 @@ class TestNextMeetup(unittest.TestCase):
             this_tuesday
         )
 
+class TestSharedFormatting(unittest.TestCase):
+
+    test_config = {
+        "phone": "555 123 4567",
+        "location":
+        {
+            "instructions": "Buzz for H. Celine or enter code 893",
+            "phone": "555 987 6543"
+        },
+        "meetup_name": "LW For Dummy",
+        "boilerplate_path": "test_boilerplate"
+    }
+
+    def test_gen_body(self):
+        expected_boilerplate = """
+Buzz for H. Celine or enter code 893
+Entrance call: 555 987 6543 (general meetup info at 555 123 4567).
+Format: Doors 6:15, Topic Start: 6:45
+About: Some structure.
+"""
+        self.assertEqual(
+            apis.lw2_body("test_topic", self.test_config),
+            "This is a test topic.\n"+expected_boilerplate
+        )
+
+
+
 class TestLWFormatting(unittest.TestCase):
 
     test_config = {
@@ -80,18 +107,6 @@ class TestLWFormatting(unittest.TestCase):
         self.assertEqual(
             apis.lw2_title("reading", self.test_config),
             "LW For Dummy: Reading & Discussion"
-        )
-
-    def test_gen_body(self):
-        expected_boilerplate = """
-Buzz for H. Celine or enter code 893
-Entrance call: 555 987 6543 (general meetup info at 555 123 4567).
-Format: Doors 6:15, Topic Start: 6:45
-About: Some structure.
-"""
-        self.assertEqual(
-            apis.lw2_body("test_topic", self.test_config),
-            "This is a test topic.\n"+expected_boilerplate
         )
 
     def test_gen_real_body(self):

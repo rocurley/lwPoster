@@ -46,6 +46,12 @@ def load_boilerplate(config):
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
+def gen_body(topic, config):
+    boilerplate = load_boilerplate(config)
+    with open("meetups/body/%s" % topic) as f:
+        topic_text = f.read()
+    return "%s\n%s" % (topic_text, boilerplate)
+
 
 def lw2_title(topic, config):
     with open("meetups/title/%s" % topic) as f:
@@ -53,11 +59,7 @@ def lw2_title(topic, config):
     return "%s: %s" % (config["meetup_name"], topic_title)
 
 def lw2_body(topic, config):
-    boilerplate = load_boilerplate(config)
-    with open("meetups/body/%s" % topic) as f:
-        topic_text = f.read()
-    body = "%s\n%s" % (topic_text, boilerplate)
-    return body
+    return gen_body(topic, config)
 
 def lw2_post_meetup(topic, config, public):
     location = config["location"]
@@ -324,6 +326,9 @@ def fb_title(topic, config):
         topic_title = f.read().strip()
     return "%s: %s" % (meetup_name, topic_title)
 
+def fb_body(topic, config):
+    return gen_body(topic, config)
+
 def fb_meetup_attrs(topic, config):
     date = next_meetup_date(config)
     time = datetime.time(18, 15)
@@ -331,11 +336,8 @@ def fb_meetup_attrs(topic, config):
     fb_login_email = config.get("fb_login_email", "")
     if fb_login_email == "":
         fb_login_email = config["email"]
-    boilerplate = load_boilerplate(config)
-    with open("meetups/body/%s" % topic) as f:
-        topic_text = f.read()
     title = fb_title(topic, config)
-    description = "%s\n%s" % (topic_text, boilerplate)
+    description = fb_body(topic, config)
     return (fb_login_email, title, description, location, date, time)
 
 def fb_post_meetup(topic, config, public=False):
