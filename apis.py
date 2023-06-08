@@ -327,6 +327,12 @@ def fb_title(topic, config):
         meetup_name = config["meetup_name"]
     return gen_title(topic, meetup_name)
 
+def fb_email(config):
+    fb_login_email = config.get("fb_login_email", "")
+    if fb_login_email == "":
+        fb_login_email = config["email"]
+    return fb_login_email
+
 def fb_body(topic, config):
     return gen_body(topic, config)
 
@@ -334,16 +340,14 @@ def fb_meetup_attrs(topic, config):
     date = next_meetup_date(config)
     time = datetime.time(18, 15)
     location = config["location"]
-    fb_login_email = config.get("fb_login_email", "")
-    if fb_login_email == "":
-        fb_login_email = config["email"]
-    title = fb_title(topic, config)
-    description = fb_body(topic, config)
-    return (fb_login_email, title, description, location, date, time)
+    return (
+        fb_email(config), fb_title(topic, config), fb_body(topic, config),
+        location, date, time
+    )
 
 def fb_post_meetup(topic, config, public=False):
-    fb_login_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
-    fb_cookies = fb_login(fb_login_email)
+    fb_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
+    fb_cookies = fb_login(fb_email)
     fb_dstg = fb_get_dstg(fb_cookies)
     res = fb_post(
         fb_cookies,
