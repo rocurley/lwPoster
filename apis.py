@@ -57,6 +57,9 @@ def gen_title(topic, meetup_name):
         topic_title = f.read().strip()
     return "%s: %s" % (meetup_name, topic_title)
 
+def gen_title_with_date(topic, meetup_name, date_str):
+    return "%s: %s: %s" % (config["meetup_name"], date_str, topic)
+
 
 def lw2_title(topic, config):
     return gen_title(topic, config["meetup_name"])
@@ -301,7 +304,7 @@ def _email_html(time_str, loc_str, topic_text, boilerplate):
     """ % (time_str, loc_str, topic_text, boilerplate))
 
 def _email_title(topic, config, date_obj):
-    return "%s: %s: %s" % (config["meetup_name"], date_obj.isoformat(), topic)
+    return gen_title_with_date(topic, config["meetup_name"], date_obj.isoformat())
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
     email_title, plaintext_email, html_email = email_pieces(topic, config)
@@ -320,6 +323,7 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
     gmail = smtplib.SMTP_SSL("smtp.gmail.com", 465)
     gmail.login("palmtree3000", getpass("Gmail password"))
     gmail.sendmail(fromaddr, toaddr, msg.as_string())
+
 
 def fb_title(topic, config):
     meetup_name = config.get("fb_meetup_name", "")
