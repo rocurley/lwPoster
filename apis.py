@@ -32,14 +32,14 @@ def next_weekday(d, weekday):
 
 
 def load_boilerplate(config):
-    phone = config["phone"]
-    location_config = config["location"]
+    phone = config.get("phone")
+    location_config = config.get("location")
     boilerplate_path = config.get("boilerplate_path") or "boilerplate"
     if "phone" in location_config:
-        phone = "%s (general meetup info at %s)" % (location_config["phone"],
+        phone = "%s (general meetup info at %s)" % (location_config.get("phone"),
                                                     phone)
     if "instructions" in location_config:
-        instructions = location_config["instructions"] + "\n"
+        instructions = location_config.get("instructions") + "\n"
     else:
         instructions = ""
     with open(boilerplate_path) as f:
@@ -58,21 +58,21 @@ def gen_title(topic, meetup_name):
     return "%s: %s" % (meetup_name, topic_title)
 
 def gen_title_with_date(topic, meetup_name, date_str):
-    return "%s: %s: %s" % (config["meetup_name"], date_str, topic)
+    return "%s: %s: %s" % (config.get("meetup_name"), date_str, topic)
 
 
 
 def lw2_title(topic, config):
-    return gen_title(topic, config["meetup_name"])
+    return gen_title(topic, config.get("meetup_name"))
 
 def lw2_body(topic, config):
     return gen_body(topic, config)
 
 def lw2_post_meetup(topic, config, public):
-    location = config["location"]
-    group_id = config["group_id"]
-    maps_key = config["maps_key"]
-    lw_key = config["lw_key"]
+    location = config.get("location", {"str": ""})
+    group_id = config.get("group_id")
+    maps_key = config.get("maps_key")
+    lw_key = config.get("lw_key")
 
     date = next_meetup_date(config)
     startTime = datetime.time(18, 15)
@@ -84,7 +84,7 @@ def lw2_post_meetup(topic, config, public):
         maps_key,
         lw2_title(topic, config),
         lw2_body(topic, config),
-        location["str"],
+        location.get("str", ""),
         date,
         startTime,
         endTime,
@@ -280,10 +280,10 @@ def email_pieces(topic, config):
     with open("meetups/%s" % topic) as f:
         topic_text = f.read()
     date = next_meetup_date(config)
-    location = config["location"]
+    location = config.get("location")
     when_str = date.strftime("%d %B %Y, 6:15 PM")
-    plain_email = _email_plaintext(when_str, location["str"], topic_text, boilerplate)
-    html_email = _email_html(when_str, location["str"], topic_text, boilerplate)
+    plain_email = _email_plaintext(when_str, location.get("str"), topic_text, boilerplate)
+    html_email = _email_html(when_str, location.get("str"), topic_text, boilerplate)
     email_title = _email_title(topic, config, date)
     return (email_title, plain_email, html_email)
 
@@ -305,7 +305,7 @@ def _email_html(time_str, loc_str, topic_text, boilerplate):
     """ % (time_str, loc_str, topic_text, boilerplate))
 
 def _email_title(topic, config, date_obj):
-    return gen_title_with_date(topic, config["meetup_name"], date_obj.isoformat())
+    return gen_title_with_date(topic, config.get("meetup_name"), date_obj.isoformat())
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
     email_title, plaintext_email, html_email = email_pieces(topic, config)
@@ -329,13 +329,13 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
 def fb_title(topic, config):
     meetup_name = config.get("fb_meetup_name", "")
     if meetup_name == "":
-        meetup_name = config["meetup_name"]
+        meetup_name = config.get("meetup_name")
     return gen_title(topic, meetup_name)
 
 def fb_email(config):
     fb_login_email = config.get("fb_login_email", "")
     if fb_login_email == "":
-        fb_login_email = config["email"]
+        fb_login_email = config.get("email")
     return fb_login_email
 
 def fb_body(topic, config):
@@ -344,7 +344,7 @@ def fb_body(topic, config):
 def fb_meetup_attrs(topic, config):
     date = next_meetup_date(config)
     time = datetime.time(18, 15)
-    location = config["location"]
+    location = config.get("location")
     return (
         fb_email(config), fb_title(topic, config), fb_body(topic, config),
         location, date, time
@@ -359,7 +359,7 @@ def fb_post_meetup(topic, config, public=False):
         fb_dstg,
         title=title,
         description=description,
-        location=location["str"],
+        location=location.get("str"),
         date=date,
         time=time,
         public=public)
@@ -392,8 +392,8 @@ def ssc_meetup_text(title,
 {footer}""".format(
         time=time.strftime("%I:%M %p"),
         date=date.strftime("%B %d, %Y"),
-        address=location["str"],
-        address_url=urllib.parse.quote_plus(location["str"]),
+        address=location.get("str"),
+        address_url=urllib.parse.quote_plus(location.get("str")),
         topic=title,
         header=header,
         footer=footer,
@@ -415,9 +415,9 @@ def print_command(command, **kwargs):
 
 
 def update_ssc_meetup(title, config, public, lw_url=None):
-    location = config["location"]
-    email = config["email"]
-    phone = config["phone"]
+    location = config.get("location")
+    email = config.get("email")
+    phone = config.get("phone")
     date = next_meetup_date()
     time = datetime.time(18, 15)
     print_command(["git", "pull"], cwd="ssc-meetups")
@@ -450,7 +450,7 @@ def post(topic, host, public=True, skip=None, lw_url=None):
     if skip is None:
         skip = {}
     config = json.load(open("config.json"))
-    config["location"] = config["locations"][host]
+    config["location"] = config.get("locations").get(host)
     if "fb" not in skip:
         fb_post_meetup(topic, config, public)
         print("Posted to Facebook")
@@ -461,9 +461,9 @@ def post(topic, host, public=True, skip=None, lw_url=None):
         update_ssc_meetup(topic, config, public, lw_url)
         print("Posted to SSC Meetups List")
     if "email" not in skip:
-        gmail_username = config["gmail_username"]
+        gmail_username = config.get("gmail_username")
         if public:
-            email_group = config["email_group"]
+            email_group = config.get("email_group")
             toaddr = email_group
         else:
             toaddr = "%s@gmail.com" % gmail_username
