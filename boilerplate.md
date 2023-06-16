@@ -6,6 +6,6 @@ We meet and start hanging out at 6:15, but don’t officially start doing the me
 
 **About these meetups:**
 
-The mission of the SF LessWrong meetup is to provide a fun, low-key social space with some structured interaction, where new and non-new community members can mingle and have interesting conversations. Everyone is welcome.
+The mission of the North Oakland LessWrong meetup is to provide a fun, low-key social space with some structured interaction, where new and non-new community members can mingle and have interesting conversations. Everyone is welcome.
 
 We explicitly encourage people to split off from the main conversation or diverge from the topic if that would be more fun for them (moving side conversations into a separate part of the space if appropriate). Meetup topics are here as a tool to facilitate fun interaction, and we certainly don’t want them to inhibit it.

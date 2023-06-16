@@ -73,7 +73,7 @@ class TestSharedFormatting(unittest.TestCase):
             "phone": "555 987 6543"
         },
         "meetup_name": "LW For Dummy",
-        "boilerplate_path": "test_boilerplate"
+        "boilerplate_path": "test_boilerplate.md"
     }
 
     def test_gen_body(self):
@@ -116,9 +116,9 @@ class TestLWFormatting(unittest.TestCase):
         del config["location"]["phone"]
         config["phone"] = "${phone}"
 
-        with open("meetups/body/reading") as f:
+        with open("meetups/body/reading.md") as f:
             topic_text = f.read()
-        with open("boilerplate") as f:
+        with open("boilerplate.md") as f:
             boilerplate = f.read()
         expected = topic_text+"\n"+config["location"]["instructions"]+"\n"+boilerplate
         self.maxDiff = None
@@ -136,7 +136,7 @@ class TestFBFormatting(unittest.TestCase):
         "email": "dummy@gmail.com",
         "fb_login_email": "dummy@gmail.com",
         "meetup_name": "LW For Dummy",
-        "boilerplate_path": "test_boilerplate"
+        "boilerplate_path": "test_boilerplate.md"
     }
 
     def test_titles(self):
