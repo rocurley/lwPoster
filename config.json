@@ -7,19 +7,17 @@
     "weekday_name": {"value": "Monday", "comment": "monday is 1, tuesday 2,  etc., sunday is 7"},
     "weekday_number": 1,
     "locations": {
-        "SF Van Ness":{
-            "lat":37.771621,
-            "lon":-122.418445,
-            "str":"140 S Van Ness Ave, San Francisco, CA 94103-2519, United States"
+        "Rose Garden":{
+            "lat": 37.859975,
+            "lon": -122.259304,
+            "str":"2740 Telegraph Ave, Berkeley, CA 94705, United States",
+            "instructions": "There's usually someone waiting at the gate for events here."
         },
         "Mecatol": {
-            "lat": 37,
-            "lon": -122,
-            "str": "540 Alcatraz Ave, Oakland, CA 94609, United States"
+            "lat": 37.850130,
+            "lon": -122.261790,
+            "str": "540 Alcatraz Ave, Oakland, CA 94609, United States",
+            "instructions": "Buzz for Kopczynski (or ask for the door code); we're  two floors up, at the back of the building."
         }
-    },
-    "location": {
-        "instructions": "A front door code or directions or similar instructions for getting into the building",
-        "phone": "phone number specifically for accessing site"
     }
 }

@@ -10,16 +10,16 @@
         "SF Van Ness":{
             "lat":37.771621,
             "lon":-122.418445,
-            "str":"140 S Van Ness Ave, San Francisco, CA 94103-2519, United States"
+            "str":"140 S Van Ness Ave, San Francisco, CA 94103-2519, United States",
+            "instructions": "A front door code or directions or similar instructions for getting into the building",
+            "phone": "phone number specifically for accessing site"
         },
         "Mecatol": {
             "lat": 37,
             "lon": -122,
-            "str": "540 Alcatraz Ave, Oakland, CA 94609, United States"
+            "str": "540 Alcatraz Ave, Oakland, CA 94609, United States",
+            "instructions": "A front door code or directions or similar instructions for getting into the building",
+            "phone": "phone number specifically for accessing site"
         }
-    },
-    "location": {
-        "instructions": "A front door code or directions or similar instructions for getting into the building",
-        "phone": "phone number specifically for accessing site"
     }
 }

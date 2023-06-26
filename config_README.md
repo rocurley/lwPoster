@@ -28,14 +28,12 @@ Multiple entries are possible for meetups which move regularly.
 ```            "lat": 37,```
 ```            "lon": -122,```
 ```            "str": "540 Alcatraz Ave, Oakland, CA 94609, United States"```
+```            "instructions": "A front door code or directions or similar instructions for getting into the building",```
+Optional. If directions are needed to get into the building or find the meeting location, add them here.
+```            "phone": "phone number specifically for accessing site"```
+Optional. This phone number, if present, appears next to the organizer's main phone (usually in secrets.json).
 ```        }```
 ```    },```
-```    "location": {```
-```        "instructions": "A front door code or directions or similar instructions for getting into the building",```
-Optional. If directions are needed to get into the building or find the meeting location, add them here.
-```        "phone": "phone number specifically for accessing site"```
-Optional. This phone number, if present, appears next to the organizer's main phone (usually in secrets.json).
-```    }```
 ```}```
 
 
