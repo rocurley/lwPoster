@@ -38,3 +38,19 @@ Optional. This phone number, if present, appears next to the organizer's main ph
 ```    }```
 ```}```
 
+
+Secrets:
+```{```
+```    "gmail_username": "Used to log in.",```
+Should be 'jrandom', not 'jrandom@gmail.com'
+```    "fb_login_email": "Used to log in.",```
+Full email address associated with your Facebook account
+```    "phone":"Phone number, used for contacting the organizer",```
+Not used for any logins, but usually you don't want this visible in an open-source repository. Can be partially overridden by location-specific phone numbers.
+```    "maps_key":"API key for google maps. Needed to post to LW since they need some fancy geoencoding done clientside",```
+TODO
+```    "lw_username": "Used to log in.",```
+Exactly what it looks like. May not always been the same as the displayed name.
+```    "lw_key":"You can get this from your cookies on lesswrong.com . Super annoying, but I haven't managed to automate login there. You'll need to refresh this every few months."```
+TODO. LW adamantly refuses to document any part of their API, so this is subject to change without notice until such time as they decide to conduct themselves like professionals.
+```}
