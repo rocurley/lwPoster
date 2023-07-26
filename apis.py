@@ -21,7 +21,7 @@ def next_meetup_date_testable(config, dt):
     d = dt.date()
     if dt.time() > datetime.time(hour=18): # if it's 6 PM or later
         d += datetime.timedelta(days=1) # then don't schedule it for today
-    day_number = config.get("weekday_number", 0)
+    day_number = config.get_default("weekday_number", 0)
     return next_weekday(d, day_number)
 
 def next_weekday(d, weekday):
@@ -34,7 +34,7 @@ def next_weekday(d, weekday):
 def load_boilerplate(config):
     phone = config.get("phone")
     location_config = config.get("location")
-    boilerplate_path = config.get("boilerplate_path", "boilerplate.md")
+    boilerplate_path = config.get_default("boilerplate_path", "boilerplate.md")
     if "phone" in location_config:
         phone = "%s (general meetup info at %s)" % (location_config.get("phone"),
                                                     phone)
@@ -69,7 +69,7 @@ def lw2_body(topic, config):
     return gen_body(topic, config)
 
 def lw2_post_meetup(topic, config, public):
-    location = config.get("location", {"str": ""})
+    location = config.get_default("location", {"str": ""})
     group_id = config.get("group_id")
     maps_key = config.get("maps_key")
     lw_key = config.get("lw_key")
@@ -84,7 +84,7 @@ def lw2_post_meetup(topic, config, public):
         maps_key,
         lw2_title(topic, config),
         lw2_body(topic, config),
-        location.get("str", ""),
+        location.get_default("str", ""),
         date,
         startTime,
         endTime,
@@ -105,7 +105,7 @@ def lw2_post_meetup_raw(lw_key, maps_key, title, body, location, date,
 
     startTimeStr = format_time(startTime)
     endTimeStr = format_time(endTime)
-    geocoding_resp = requests.get(
+    geocoding_resp = requests.get_default(
         "https://maps.googleapis.com/maps/api/geocode/json",
         params={
             "address": location,
@@ -327,13 +327,13 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
 
 
 def fb_title(topic, config):
-    meetup_name = config.get("fb_meetup_name", "")
+    meetup_name = config.get_default("fb_meetup_name", "")
     if meetup_name == "":
         meetup_name = config.get("meetup_name")
     return gen_title(topic, meetup_name)
 
 def fb_email(config):
-    fb_login_email = config.get("fb_login_email", "")
+    fb_login_email = config.get_default("fb_login_email", "")
     if fb_login_email == "":
         fb_login_email = config.get("email")
     return fb_login_email
@@ -481,6 +481,20 @@ class PostingConfig:
             v = key
         self.public[k] = v
 
+    def get_default(self, *args):
+        if len(args) < 2:
+            raise KeyError
+        default = args[-1]
+        args = args[:-1]
+        try:
+            v = self.get(*args)
+            if v != None:
+                return v
+        except KeyError:
+            pass
+        v = default
+        self.set(*args, v)
+        return v
 
 def config(file="config.json", secrets="secrets.json"):
     return PostingConfig(file, secrets)
