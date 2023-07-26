@@ -472,10 +472,9 @@ class PostingConfig:
 def config(file="config.json", secrets="secrets.json"):
     return PostingConfig(file, secrets)
 
-def post(topic, host, public=True, skip=None, lw_url=None):
+def post(config, topic, host, public=True, skip=None, lw_url=None):
     if skip is None:
         skip = {}
-    config = json.load(open("config.json"))
     config["location"] = config.get("locations").get(host)
     if "fb" not in skip:
         fb_post_meetup(topic, config, public)
@@ -497,6 +496,7 @@ def post(topic, host, public=True, skip=None, lw_url=None):
         print("Email Sent")
 
 if __name__ == "__main__":
+    cfg = config()
     topic = input("enter topic name: ")
     host = input("enter short name for location: ")
-    post(topic, host, skip={"fb": True})
+    post(cfg, topic, host, skip={"fb": True})
