@@ -469,13 +469,26 @@ class PostingConfig:
             return tmp_p
         raise KeyError
 
+    def set(self, *args):
+        if len(args) < 2:
+            raise KeyError
+        if len(args) == 2:
+            self.public[args[0]] = args[1]
+        k = {}
+        v = {}
+        for key in args:
+            k = v
+            v = key
+        self.public[k] = v
+
+
 def config(file="config.json", secrets="secrets.json"):
     return PostingConfig(file, secrets)
 
 def post(config, topic, host, public=True, skip=None, lw_url=None):
     if skip is None:
         skip = {}
-    config["location"] = config.get("locations").get(host)
+    config.set("location", config.get("locations").get(host))
     if "fb" not in skip:
         fb_post_meetup(topic, config, public)
         print("Posted to Facebook")
