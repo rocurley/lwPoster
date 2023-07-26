@@ -445,6 +445,32 @@ def update_ssc_meetup(title, config, public, lw_url=None):
     if public:
         print_command(["git", "push"], cwd="ssc-meetups")
 
+class PostingConfig:
+    public = {}
+    secret = {}
+
+    def __init__(self, file="config.json", secrets="secrets.json"):
+        public = json.load(open(file))
+        secret = json.load(open(secrets))
+
+    def get(self, *args):
+        if len(args) < 1:
+            raise KeyError
+        if len(args) == 1:
+            return secret.get(args[0], public.get(args[0]))
+        tmp_p = public
+        tmp_s = secret
+        for key in args:
+            tmp_s = tmp_s.get(key, {})
+            tmp_p = tmp_p.get(key, {})
+        if tmp_s and tmp_s != {}:
+            return tmp_s
+        if tmp_p and tmp_p != {}:
+            return tmp_p
+        raise KeyError
+
+def config(file="config.json", secrets="secrets.json"):
+    return PostingConfig(file, secrets)
 
 def post(topic, host, public=True, skip=None, lw_url=None):
     if skip is None:
