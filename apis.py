@@ -277,14 +277,16 @@ def fb_post(fb_cookies,
 
 def email_pieces(topic, config):
     boilerplate = load_boilerplate(config)
-    with open("meetups/%s.md" % topic) as f:
+    with open("meetups/title/%s.md" % topic) as f:
+        topic_title = f.read()
+    with open("meetups/body/%s.md" % topic) as f:
         topic_text = f.read()
     date = next_meetup_date(config)
     location = config.get("location")
     when_str = date.strftime("%d %B %Y, 6:15 PM")
     plain_email = _email_plaintext(when_str, location.get("str"), topic_text, boilerplate)
     html_email = _email_html(when_str, location.get("str"), topic_text, boilerplate)
-    email_title = _email_title(topic, config, date)
+    email_title = _email_title(topic_title, config, date)
     return (email_title, plain_email, html_email)
 
 def _email_plaintext(time_str, loc_str, topic_text, boilerplate):
