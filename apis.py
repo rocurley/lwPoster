@@ -62,6 +62,7 @@ def gen_title_with_date(topic, meetup_name, date_str):
 
 
 
+
 def lw2_title(topic, config):
     return gen_title(topic, config.get("meetup_name"))
 
@@ -202,6 +203,8 @@ def lw_get_uh(cookies):
     return response_html.find("input", attrs={"name": "uh"})["value"]
 
 
+
+
 def fb_login(email, password=None):
     url = "https://m.facebook.com/login.php"
 
@@ -274,6 +277,48 @@ def fb_post(fb_cookies,
         cookies=fb_cookies,
         allow_redirects=False)
 
+def fb_title(topic, config):
+    meetup_name = config.get_default("fb_meetup_name", "")
+    if meetup_name == "":
+        meetup_name = config.get("meetup_name")
+    return gen_title(topic, meetup_name)
+
+def fb_email(config):
+    fb_login_email = config.get_default("fb_login_email", "")
+    if fb_login_email == "":
+        fb_login_email = config.get("email")
+    return fb_login_email
+
+def fb_body(topic, config):
+    return gen_body(topic, config)
+
+def fb_meetup_attrs(topic, config):
+    date = next_meetup_date(config)
+    time = datetime.time(18, 15)
+    location = config.get("location")
+    return (
+        fb_email(config), fb_title(topic, config), fb_body(topic, config),
+        location, date, time
+    )
+
+def fb_post_meetup(topic, config, public=False):
+    fb_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
+    fb_cookies = fb_login(fb_email)
+    fb_dstg = fb_get_dstg(fb_cookies)
+    res = fb_post(
+        fb_cookies,
+        fb_dstg,
+        title=title,
+        description=description,
+        location=location.get("str"),
+        date=date,
+        time=time,
+        public=public)
+    if not res.ok:
+        raise requests.HTTPError(res)
+
+
+
 
 def email_pieces(topic, config):
     boilerplate = load_boilerplate(config)
@@ -328,45 +373,6 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
     gmail.sendmail(fromaddr, toaddr, msg.as_string())
 
 
-def fb_title(topic, config):
-    meetup_name = config.get_default("fb_meetup_name", "")
-    if meetup_name == "":
-        meetup_name = config.get("meetup_name")
-    return gen_title(topic, meetup_name)
-
-def fb_email(config):
-    fb_login_email = config.get_default("fb_login_email", "")
-    if fb_login_email == "":
-        fb_login_email = config.get("email")
-    return fb_login_email
-
-def fb_body(topic, config):
-    return gen_body(topic, config)
-
-def fb_meetup_attrs(topic, config):
-    date = next_meetup_date(config)
-    time = datetime.time(18, 15)
-    location = config.get("location")
-    return (
-        fb_email(config), fb_title(topic, config), fb_body(topic, config),
-        location, date, time
-    )
-
-def fb_post_meetup(topic, config, public=False):
-    fb_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
-    fb_cookies = fb_login(fb_email)
-    fb_dstg = fb_get_dstg(fb_cookies)
-    res = fb_post(
-        fb_cookies,
-        fb_dstg,
-        title=title,
-        description=description,
-        location=location.get("str"),
-        date=date,
-        time=time,
-        public=public)
-    if not res.ok:
-        raise requests.HTTPError(res)
 
 
 def ssc_meetup_text(title,
@@ -405,17 +411,6 @@ def ssc_meetup_text(title,
     return meetup_text
 
 
-def print_command(command, **kwargs):
-    print(" ".join(command))
-    p = Popen(command, stdout=PIPE, stderr=PIPE, **kwargs)
-    output, err = p.communicate()
-    print(output, end=' ')
-    if err:
-        print(err, end=' ')
-    if p.returncode != 0:
-        raise IOError("Return Status %i" % p.returncode)
-
-
 def update_ssc_meetup(title, config, public, lw_url=None):
     location = config.get("location")
     email = config.get("email")
@@ -446,6 +441,20 @@ def update_ssc_meetup(title, config, public, lw_url=None):
         cwd="ssc-meetups")
     if public:
         print_command(["git", "push"], cwd="ssc-meetups")
+
+
+
+
+def print_command(command, **kwargs):
+    print(" ".join(command))
+    p = Popen(command, stdout=PIPE, stderr=PIPE, **kwargs)
+    output, err = p.communicate()
+    print(output, end=' ')
+    if err:
+        print(err, end=' ')
+    if p.returncode != 0:
+        raise IOError("Return Status %i" % p.returncode)
+
 
 class PostingConfig:
     public = {}
