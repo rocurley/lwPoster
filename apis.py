@@ -58,7 +58,7 @@ def gen_title(topic, meetup_name):
     return "%s: %s" % (meetup_name, topic_title)
 
 def gen_title_with_date(topic, meetup_name, date_str):
-    return "%s: %s: %s" % (config.get("meetup_name"), date_str, topic)
+    return "%s: %s: %s" % (meetup_name, date_str, topic)
 
 
 
