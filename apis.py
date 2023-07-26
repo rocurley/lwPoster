@@ -177,7 +177,7 @@ mutation {
 def lw_login(username, password=None):
     url = "http://lesswrong.com/post/login"
 
-    password = password or getpass("LW password")
+    password = password or getpass("LW password: ")
 
     payload = {
         "rem": "on",
@@ -208,7 +208,7 @@ def lw_get_uh(cookies):
 def fb_login(email, password=None):
     url = "https://m.facebook.com/login.php"
 
-    password = password or getpass("FB password")
+    password = password or getpass("FB password: ")
 
     payload = {
         "email": email,
@@ -369,7 +369,7 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
     msg.attach(part2)
 
     gmail = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    gmail.login(gmail_username, getpass("Gmail password"))
+    gmail.login(gmail_username, getpass("Gmail password: "))
     gmail.sendmail(fromaddr, toaddr, msg.as_string())
 
 
