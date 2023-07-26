@@ -450,16 +450,16 @@ class PostingConfig:
     secret = {}
 
     def __init__(self, file="config.json", secrets="secrets.json"):
-        public = json.load(open(file))
-        secret = json.load(open(secrets))
+        self.public = json.load(open(file))
+        self.secret = json.load(open(secrets))
 
     def get(self, *args):
         if len(args) < 1:
             raise KeyError
         if len(args) == 1:
-            return secret.get(args[0], public.get(args[0]))
-        tmp_p = public
-        tmp_s = secret
+            return self.secret.get(args[0], self.public.get(args[0]))
+        tmp_p = self.public
+        tmp_s = self.secret
         for key in args:
             tmp_s = tmp_s.get(key, {})
             tmp_p = tmp_p.get(key, {})
