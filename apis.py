@@ -528,4 +528,4 @@ if __name__ == "__main__":
     cfg = config()
     topic = input("enter topic name: ")
     host = input("enter short name for location: ")
-    post(cfg, topic, host, skip={"fb": True, "ssc": True})
+    post(cfg, topic, host, skip={"fb": True, "lw": True, "ssc": True})
