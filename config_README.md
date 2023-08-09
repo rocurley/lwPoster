@@ -40,7 +40,9 @@ Optional. This phone number, if present, appears next to the organizer's main ph
 Secrets:
 ```{```
 ```    "gmail_username": "Used to log in.",```
-Should be 'jrandom', not 'jrandom@gmail.com'
+Should be 'jrandom', not 'jrandom@gmail.com'.
+```    "gmail_app_password": "12345678abcdefgh",```
+Password required is a 16-digit application-specific password, not the normal login password. See https://support.google.com/accounts/answer/185833
 ```    "fb_login_email": "Used to log in.",```
 Full email address associated with your Facebook account
 ```    "phone":"Phone number, used for contacting the organizer",```
