@@ -369,7 +369,10 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
     msg.attach(part2)
 
     gmail = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    gmail.login(gmail_username, getpass("Gmail password: "))
+    pwd = config.get("gmail_app_password")
+    if not pwd:
+        pwd = getpass("Gmail application-specific password: ")
+    gmail.login(gmail_username, pwd)
     gmail.sendmail(fromaddr, toaddr, msg.as_string())
 
 
