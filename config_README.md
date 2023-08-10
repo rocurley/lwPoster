@@ -8,7 +8,7 @@ of purpose in many cases.
 Optional. Public email group to send email notifications to.
 ```    "email": "Used by SSC poster for contact info.",```
 TODO
-```    "group_id":"Looks like <qQkgmEeEreY6gjd7>, you can get it from the url of your group on lesswrong.",```
+```    "group_id":"Looks like 'qQkgmEeEreY6gjd7', you can get it from the url of your group on lesswrong.",```
 This URL looks like `https://www.lesswrong.com/groups/v7dn9rTWLcK5Tcy9f`
 ```    "fb_meetup_name": "San Francisco Less Wrong Meetup",```
 Name to use for the meetup on FB. Optional, defaults to `meetup_name`
@@ -43,8 +43,12 @@ Secrets:
 Should be 'jrandom', not 'jrandom@gmail.com'.
 ```    "gmail_app_password": "12345678abcdefgh",```
 Password required is a 16-digit application-specific password, not the normal login password. See https://support.google.com/accounts/answer/185833
+```    "fb_group_ID": "Bay Area LessWrong Events",```
+Identifier for the Facebook Group being targeted for posting
 ```    "fb_login_email": "Used to log in.",```
 Full email address associated with your Facebook account
+```    "fb_login_password": "Used to log in.",```
+Optional. Password your Facebook account, will prompt if not present.
 ```    "phone":"Phone number, used for contacting the organizer",```
 Not used for any logins, but usually you don't want this visible in an open-source repository. Can be partially overridden by location-specific phone numbers.
 ```    "maps_key":"API key for google maps. Needed to post to LW since they need some fancy geoencoding done clientside",```

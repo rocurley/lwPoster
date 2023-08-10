@@ -289,6 +289,9 @@ def fb_email(config):
         fb_login_email = config.get("email")
     return fb_login_email
 
+def fb_pass(config):
+    return config.get_default("fb_login_password", None)
+
 def fb_body(topic, config):
     return gen_body(topic, config)
 
@@ -303,7 +306,8 @@ def fb_meetup_attrs(topic, config):
 
 def fb_post_meetup(topic, config, public=False):
     fb_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
-    fb_cookies = fb_login(fb_email)
+    fb_password = fb_pass(config)
+    fb_cookies = fb_login(fb_email, fb_password)
     fb_dstg = fb_get_dstg(fb_cookies)
     res = fb_post(
         fb_cookies,
@@ -517,9 +521,12 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
     if skip is None:
         skip = {}
     config.set("location", config.get("locations").get(host))
-    if "fb" not in skip:
-        fb_post_meetup(topic, config, public)
-        print("Posted to Facebook")
+    # Facebook disabled until future notice
+    # looks like it's no longer possible to post as a user
+    # you must register as an app and get group owner permission to post with that app
+    # if "fb" not in skip:
+    #     fb_post_meetup(topic, config, public)
+    #     print("Posted to Facebook")
     if "lw" not in skip:
         lw_url = lw2_post_meetup(topic, config, public)
         print(lw_url)
@@ -540,4 +547,4 @@ if __name__ == "__main__":
     cfg = config()
     topic = input("enter topic name: ")
     host = input("enter short name for location: ")
-    post(cfg, topic, host, skip={"fb": True, "ssc": True})
+    post(cfg, topic, host, skip={"lw": True, "ssc": True})
