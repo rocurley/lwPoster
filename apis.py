@@ -289,6 +289,9 @@ def fb_email(config):
         fb_login_email = config.get("email")
     return fb_login_email
 
+def fb_pass(config):
+    return config.get_default("fb_login_password", None)
+
 def fb_body(topic, config):
     return gen_body(topic, config)
 
@@ -303,7 +306,8 @@ def fb_meetup_attrs(topic, config):
 
 def fb_post_meetup(topic, config, public=False):
     fb_email, title, description, location, date, time = fb_meetup_attrs(topic, config)
-    fb_cookies = fb_login(fb_email)
+    fb_password = fb_pass(config)
+    fb_cookies = fb_login(fb_email, fb_password)
     fb_dstg = fb_get_dstg(fb_cookies)
     res = fb_post(
         fb_cookies,
