@@ -521,9 +521,12 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
     if skip is None:
         skip = {}
     config.set("location", config.get("locations").get(host))
-    if "fb" not in skip:
-        fb_post_meetup(topic, config, public)
-        print("Posted to Facebook")
+    # Facebook disabled until future notice
+    # looks like it's no longer possible to post as a user
+    # you must register as an app and get group owner permission to post with that app
+    # if "fb" not in skip:
+    #     fb_post_meetup(topic, config, public)
+    #     print("Posted to Facebook")
     if "lw" not in skip:
         lw_url = lw2_post_meetup(topic, config, public)
         print(lw_url)
@@ -544,4 +547,4 @@ if __name__ == "__main__":
     cfg = config()
     topic = input("enter topic name: ")
     host = input("enter short name for location: ")
-    post(cfg, topic, host, skip={"email": True, "lw": True, "ssc": True})
+    post(cfg, topic, host, skip={"lw": True, "ssc": True})
