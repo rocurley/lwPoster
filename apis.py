@@ -46,6 +46,21 @@ def load_boilerplate(config):
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
+def load_text_title(topic):
+    with open("meetups/title/%s.md" % topic) as f:
+        topic_title = f.read()
+    return topic_title
+
+def load_text_and_plaintext_body(topic):
+    with open("meetups/body/%s.md" % topic) as f:
+        topic_text = f.read()
+    try:
+        with open("meetups/plainbody/%s.md" % topic) as f:
+            topic_plaintext = f.read()
+    except IOError:
+        topic_plaintext = topic_text
+    return (topic_text, topic_plaintext)
+
 def gen_body(topic, config):
     boilerplate = load_boilerplate(config)
     with open("meetups/body/%s.md" % topic) as f:
@@ -326,16 +341,8 @@ def fb_post_meetup(topic, config, public=False):
 
 def email_pieces(topic, config):
     boilerplate = load_boilerplate(config)
-    with open("meetups/title/%s.md" % topic) as f:
-        topic_title = f.read()
-    with open("meetups/body/%s.md" % topic) as f:
-        topic_text = f.read()
-        topic_plaintext = topic_text
-    try:
-        with open("meetups/plainbody/%s.md" % topic) as f:
-            topic_plaintext = f.read()
-    except IOError:
-        topic_plaintext = topic_text
+    topic_title = load_text_title(topic)
+    topic_text, topic_plaintext = load_text_and_plaintext_body(topic)
     date = next_meetup_date(config)
     location = config.get("location")
     when_str = date.strftime("%d %B %Y, 6:15 PM")
