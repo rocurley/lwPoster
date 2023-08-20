@@ -79,6 +79,18 @@ def gen_title(topic, meetup_name):
 def gen_title_with_date(topic, meetup_name, date_str):
     return "%s: %s: %s" % (meetup_name, date_str, topic)
 
+def gen_time(hour24, minute):
+    if hour24 > 12:
+        h = hour24-12
+        half = "PM"
+    elif hour24 = 0:
+        h = 12
+        half = "AM"
+    else:
+        h = hour24
+        half = "AM"
+    t = "%s:%s $s" % (h, minute, half)
+    return date.strftime("%d %B %Y, "+t)
 
 
 
@@ -349,7 +361,7 @@ def email_pieces(topic, config):
     topic_text, topic_plaintext = load_text_and_plaintext_body(topic)
     date = next_meetup_date(config)
     location = config.get("location")
-    when_str = date.strftime("%d %B %Y, 6:15 PM")
+    when_str = gen_time(18, 15) # make this config later
     plain_email = _email_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
     html_email = _email_html(when_str, location.get("str"), topic_text, boilerplate)
     email_title = _email_title(topic_title, config, date)
