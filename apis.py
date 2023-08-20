@@ -427,8 +427,10 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
 
 
 
-def print_text_meetup(topic, config):
-    boilerplate = load_boilerplate(config)
+def print_text_meetup(topic, config, use_boilerplate):
+    boilerplate = ""
+    if use_boilerplate:
+        boilerplate = load_boilerplate(config)
     topic_title = load_text_title(topic)
     meetup_name = config.get("meetup_name")
     date_str = next_meetup_date(config)
@@ -437,8 +439,10 @@ def print_text_meetup(topic, config):
     time_str = gen_time(18, 15) # make this config later
     print(markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
 
-def print_plaintext_meetup(topic, config):
-    boilerplate = load_boilerplate(config)
+def print_plaintext_meetup(topic, config, use_boilerplate):
+    boilerplate = ""
+    if use_boilerplate:
+        boilerplate = load_boilerplate(config)
     topic_title = load_text_title(topic)
     _, topic_plaintext = load_text_and_plaintext_body(topic)
     meetup_name = config.get("meetup_name")
@@ -538,10 +542,22 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
             toaddr = "%s@gmail.com" % gmail_username
         send_meetup_email(topic, config, gmail_username, toaddr)
         print("Email Sent")
-    if "plaintext" not in skip:
-        print_text_meetup(topic, config)
-    if "markdown" not in skip:
-        print_plaintext_meetup(topic, config)
+    print_plaintext = "plaintext" not in skip
+    print_formatted_text = "markdown" not in skip
+    if print_plaintext or print_formatted_text:
+        boil_input = input("include boilerplate? (y/N) ")
+        coerced_boil = boil_input.strip().lower()
+        if coerced_boil == "y" or coerced_boil == "yes":
+            boil = True
+        elif coerced_boil == "n" or coerced_boil == "no":
+            boil = False
+        else:
+            print("Didn't understand response, defaulting to no boilerplate")
+            boil = False
+    if print_plaintext:
+        print_text_meetup(topic, config, boil)
+    if print_formatted_text:
+        print_plaintext_meetup(topic, config, boil)
 
 if __name__ == "__main__":
     cfg = config()
