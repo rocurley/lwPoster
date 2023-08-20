@@ -89,8 +89,8 @@ def gen_time(hour24, minute):
     else:
         h = hour24
         half = "AM"
-    t = "%s:%s $s" % (h, minute, half)
-    return date.strftime("%d %B %Y, "+t)
+    t = "%s:%s %s" % (h, minute, half)
+    return datetime.strftime("%d %B %Y, "+t)
 
 def message_plaintext(time_str, loc_str, topic_text, boilerplate):
     return """WHEN: %s
@@ -110,19 +110,20 @@ def message_markdown(time_str, loc_str, topic_text, boilerplate):
     """ % (time_str, loc_str, topic_text, boilerplate)
 
 def message_html(time_str, loc_str, topic_text, boilerplate):
-    return markdown.markdown(full_markdown(time_str, loc_str, topic_text, boilerplate))
+    return markdown.markdown(message_markdown(time_str, loc_str, topic_text, boilerplate))
 
-def plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, topic_text, boilerplate):
+def plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
+    topic_text, _ = load_text_and_plaintext_body(topic)
     return "%s\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
             message_plaintext(time_str, loc_str, topic_text, boilerplate))
 
-def markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, topic_text, boilerplate):
+def markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
+    _, topic_text = load_text_and_plaintext_body(topic)
     return "__%s__\n\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
             message_markdown(time_str, loc_str, topic_text, boilerplate))
 
-def html_with_title(topic, meetup_name, date_str, time_str, loc_str, topic_text, boilerplate):
-    return markdown.markdown(markdown_with_title(gen_title_with_date(topic, meetup_name, date_str),
-        message_markdown(time_str, loc_str, topic_text, boilerplate)))
+def html_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
+    return markdown.markdown(markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
 
 
 
@@ -498,9 +499,24 @@ def update_ssc_meetup(title, config, public, lw_url=None):
 
 
 def print_text_meetup(topic, config):
+    boilerplate = load_boilerplate(config)
+    topic_title = load_text_title(topic)
+    date_str = next_meetup_date(config)
+    location = config.get("location")
+    time_str = gen_time(18, 15) # make this config later
+    html_email = message_html(when_str, location.get("str"), topic_text, boilerplate)
+    markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
     print("plain text not printed")
 
 def print_plaintext_meetup(topic, config):
+    boilerplate = load_boilerplate(config)
+    topic_title = load_text_title(topic)
+    _, topic_plaintext = load_text_and_plaintext_body(topic)
+    date_str = next_meetup_date(config)
+    location = config.get("location")
+    time_str = gen_time(18, 15) # make this config later
+    plain_email = message_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
+    plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
     print("markdow-formatted text not printed")
 
 
