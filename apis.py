@@ -83,7 +83,7 @@ def gen_time(hour24, minute):
     if hour24 > 12:
         h = hour24-12
         half = "PM"
-    elif hour24 = 0:
+    elif hour24 == 0:
         h = 12
         half = "AM"
     else:
