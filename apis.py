@@ -430,23 +430,23 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
 def print_text_meetup(topic, config):
     boilerplate = load_boilerplate(config)
     topic_title = load_text_title(topic)
+    meetup_name = config.get("meetup_name")
     date_str = next_meetup_date(config)
     location = config.get("location")
+    loc_str = location.get("str")
     time_str = gen_time(18, 15) # make this config later
-    html_email = message_html(when_str, location.get("str"), topic_text, boilerplate)
-    markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
-    print("plain text not printed")
+    print(markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
 
 def print_plaintext_meetup(topic, config):
     boilerplate = load_boilerplate(config)
     topic_title = load_text_title(topic)
     _, topic_plaintext = load_text_and_plaintext_body(topic)
+    meetup_name = config.get("meetup_name")
     date_str = next_meetup_date(config)
     location = config.get("location")
+    loc_str = location.get("str")
     time_str = gen_time(18, 15) # make this config later
-    plain_email = message_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
-    plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
-    print("markdow-formatted text not printed")
+    print(plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
 
 
 
