@@ -548,6 +548,10 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
             toaddr = "%s@gmail.com" % gmail_username
         send_meetup_email(topic, config, gmail_username, toaddr)
         print("Email Sent")
+    if "plaintext" not in skip:
+        print("plain text not printed")
+    if "markdown" not in skip:
+        print("markdow-formatted text not printed")
 
 if __name__ == "__main__":
     cfg = config()
