@@ -89,8 +89,7 @@ def gen_time(hour24, minute):
     else:
         h = hour24
         half = "AM"
-    t = "%s:%s %s" % (h, minute, half)
-    return datetime.strftime("%d %B %Y, "+t)
+    return "%s:%s %s" % (h, minute, half)
 
 def message_plaintext(time_str, loc_str, topic_text, boilerplate):
     return """WHEN: %s
