@@ -46,19 +46,84 @@ def load_boilerplate(config):
         boilerplate = string.Template(instructions + f.read())
     return boilerplate.substitute(phone=phone)
 
-def gen_body(topic, config):
-    boilerplate = load_boilerplate(config)
+def load_text_title(topic):
+    with open("meetups/title/%s.md" % topic) as f:
+        topic_title = f.read()
+    return topic_title
+
+def load_text_and_plaintext_body(topic):
     with open("meetups/body/%s.md" % topic) as f:
         topic_text = f.read()
+    try:
+        with open("meetups/plainbody/%s.md" % topic) as f:
+            topic_plaintext = f.read()
+    except IOError:
+        topic_plaintext = topic_text
+    return (topic_text, topic_plaintext)
+
+# MARK to MARKDOWN
+def gen_body(topic, config):
+    boilerplate = load_boilerplate(config)
+    topic_text, _ = load_text_and_plaintext_body(topic)
     return "%s\n%s" % (topic_text, boilerplate)
 
+def gen_plaintext_body(topic, config):
+    boilerplate = load_boilerplate(config)
+    _, topic_plaintext = load_text_and_plaintext_body(topic)
+    return "%s\n%s" % (topic_plaintext, boilerplate)
+
 def gen_title(topic, meetup_name):
-    with open("meetups/title/%s.md" % topic) as f:
-        topic_title = f.read().strip()
+    topic_title = load_text_title(topic).strip()
     return "%s: %s" % (meetup_name, topic_title)
 
 def gen_title_with_date(topic, meetup_name, date_str):
-    return "%s: %s: %s" % (meetup_name, date_str, topic)
+    topic_title = load_text_title(topic).strip()
+    return "%s: %s: %s" % (meetup_name, date_str, topic_title)
+
+def gen_time(hour24, minute):
+    if hour24 > 12:
+        h = hour24-12
+        half = "PM"
+    elif hour24 == 0:
+        h = 12
+        half = "AM"
+    else:
+        h = hour24
+        half = "AM"
+    return "%s:%s %s" % (h, minute, half)
+
+def message_plaintext(time_str, loc_str, topic_text, boilerplate):
+    return """WHEN: %s
+WHERE: %s
+
+%s
+%s
+    """ % (time_str, loc_str, topic_text, boilerplate)
+
+def message_markdown(time_str, loc_str, topic_text, boilerplate):
+    return """**WHEN:** %s
+
+**WHERE:** %s
+
+%s
+%s
+    """ % (time_str, loc_str, topic_text, boilerplate)
+
+def message_html(time_str, loc_str, topic_text, boilerplate):
+    return markdown.markdown(message_markdown(time_str, loc_str, topic_text, boilerplate))
+
+def plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
+    _, topic_plaintext = load_text_and_plaintext_body(topic)
+    return "%s\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
+            message_plaintext(time_str, loc_str, topic_plaintext, boilerplate))
+
+def markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
+    topic_text, _ = load_text_and_plaintext_body(topic)
+    return "__%s__\n\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
+            message_markdown(time_str, loc_str, topic_text, boilerplate))
+
+def html_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
+    return markdown.markdown(markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
 
 
 
@@ -326,40 +391,15 @@ def fb_post_meetup(topic, config, public=False):
 
 def email_pieces(topic, config):
     boilerplate = load_boilerplate(config)
-    with open("meetups/title/%s.md" % topic) as f:
-        topic_title = f.read()
-    with open("meetups/body/%s.md" % topic) as f:
-        topic_text = f.read()
-        topic_plaintext = topic_text
-    try:
-        with open("meetups/plainbody/%s.md" % topic) as f:
-            topic_plaintext = f.read()
-    except IOError:
-        topic_plaintext = topic_text
+    topic_title = load_text_title(topic)
+    topic_text, topic_plaintext = load_text_and_plaintext_body(topic)
     date = next_meetup_date(config)
     location = config.get("location")
-    when_str = date.strftime("%d %B %Y, 6:15 PM")
-    plain_email = _email_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
-    html_email = _email_html(when_str, location.get("str"), topic_text, boilerplate)
+    when_str = gen_time(18, 15) # make this config later
+    plain_email = message_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
+    html_email = message_html(when_str, location.get("str"), topic_text, boilerplate)
     email_title = _email_title(topic_title, config, date)
     return (email_title, plain_email, html_email)
-
-def _email_plaintext(time_str, loc_str, topic_text, boilerplate):
-    return """WHEN: %s
-WHERE: %s
-
-%s
-%s
-    """ % (time_str, loc_str, topic_text, boilerplate)
-
-def _email_html(time_str, loc_str, topic_text, boilerplate):
-    return markdown.markdown("""**WHEN:** %s
-
-**WHERE:** %s
-
-%s
-%s
-    """ % (time_str, loc_str, topic_text, boilerplate))
 
 def _email_title(topic, config, date_obj):
     return gen_title_with_date(topic, config.get("meetup_name"), date_obj.isoformat())
@@ -388,72 +428,29 @@ def send_meetup_email(topic, config, gmail_username, toaddr):
 
 
 
-def ssc_meetup_text(title,
-                    location,
-                    date,
-                    time,
-                    header,
-                    footer,
-                    email,
-                    phone,
-                    lw_url=None):
-    if lw_url:
-        lw_line = "    * More Info: [Lesswrong Meetup Post](%s)" % lw_url
-    else:
-        lw_line = ""
-    meetup_text = """{header}
-* San Francisco [LW]
-
-    * Meetup scheduled: {date}, {time}
-    * Topic: {topic}
-    * Location: [{address}](https://www.google.com/maps/place/{address_url})
-    * Contact: [{email}](mailto:{email}), {phone}
-{lw_line}
-
-{footer}""".format(
-        time=time.strftime("%I:%M %p"),
-        date=date.strftime("%B %d, %Y"),
-        address=location.get("str"),
-        address_url=urllib.parse.quote_plus(location.get("str")),
-        topic=title,
-        header=header,
-        footer=footer,
-        email=email,
-        phone=phone,
-        lw_line=lw_line)
-    return meetup_text
-
-
-def update_ssc_meetup(title, config, public, lw_url=None):
+def print_text_meetup(topic, config, use_boilerplate):
+    boilerplate = ""
+    if use_boilerplate:
+        boilerplate = load_boilerplate(config)
+    topic_title = load_text_title(topic)
+    meetup_name = config.get("meetup_name")
+    date_str = next_meetup_date(config)
     location = config.get("location")
-    email = config.get("email")
-    phone = config.get("phone")
-    date = next_meetup_date()
-    time = datetime.time(18, 15)
-    print_command(["git", "pull"], cwd="ssc-meetups")
-    r = re.compile(
-        r"\n.*BEGIN_SAN_FRANCISCO_LW.*?\n(.*\n)*?.*?END_SAN_FRANCISCO_LW.*\n")
-    with open("ssc-meetups/index.md", "r+") as f:
-        old = f.read()
-        match = r.search(old)
-        if not match:
-            raise ValueError("Could not find anchors")
-        lines = match.group().split('\n')
-        header = "\n".join(lines[:2])
-        footer = "\n".join(lines[-2:])
-        new = r.sub(
-            ssc_meetup_text(title, location, date, time, header, footer, email,
-                            phone, lw_url), old)
-        f.seek(0)
-        f.write(new)
-        f.truncate()
-    print_command(["git", "add", "index.md"], cwd="ssc-meetups")
-    print_command(
-        ["git", "commit", "-m",
-         date.strftime("San Francisco Meetup %F")],
-        cwd="ssc-meetups")
-    if public:
-        print_command(["git", "push"], cwd="ssc-meetups")
+    loc_str = location.get("str")
+    time_str = gen_time(18, 15) # make this config later
+    print(markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
+
+def print_plaintext_meetup(topic, config, use_boilerplate):
+    boilerplate = ""
+    if use_boilerplate:
+        boilerplate = load_boilerplate(config)
+    topic_title = load_text_title(topic)
+    meetup_name = config.get("meetup_name")
+    date_str = next_meetup_date(config)
+    location = config.get("location")
+    loc_str = location.get("str")
+    time_str = gen_time(18, 15) # make this config later
+    print(plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
 
 
 
@@ -536,9 +533,6 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
     if "lw" not in skip:
         lw_url = lw2_post_meetup(topic, config, public)
         print(lw_url)
-    if "ssc" not in skip:
-        update_ssc_meetup(topic, config, public, lw_url)
-        print("Posted to SSC Meetups List")
     if "email" not in skip:
         gmail_username = config.get("gmail_username")
         if public:
@@ -548,9 +542,25 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
             toaddr = "%s@gmail.com" % gmail_username
         send_meetup_email(topic, config, gmail_username, toaddr)
         print("Email Sent")
+    print_plaintext = "plaintext" not in skip
+    print_formatted_text = "markdown" not in skip
+    if print_plaintext or print_formatted_text:
+        boil_input = input("include boilerplate? (y/N) ")
+        coerced_boil = boil_input.strip().lower()
+        if coerced_boil == "y" or coerced_boil == "yes":
+            boil = True
+        elif coerced_boil == "n" or coerced_boil == "no" or coerced_boil == "":
+            boil = False
+        else:
+            print("Didn't understand response, defaulting to no boilerplate")
+            boil = False
+    if print_plaintext:
+        print_text_meetup(topic, config, boil)
+    if print_formatted_text:
+        print_plaintext_meetup(topic, config, boil)
 
 if __name__ == "__main__":
     cfg = config()
     topic = input("enter topic name: ")
     host = input("enter short name for location: ")
-    post(cfg, topic, host, skip={"fb": True, "ssc": True, "lw": True})
+    post(cfg, topic, host, skip={"fb": True, "lw": True})
