@@ -92,6 +92,39 @@ def gen_time(hour24, minute):
     t = "%s:%s $s" % (h, minute, half)
     return date.strftime("%d %B %Y, "+t)
 
+def message_plaintext(time_str, loc_str, topic_text, boilerplate):
+    return """WHEN: %s
+WHERE: %s
+
+%s
+%s
+    """ % (time_str, loc_str, topic_text, boilerplate)
+
+def message_markdown(time_str, loc_str, topic_text, boilerplate):
+    return """**WHEN:** %s
+
+**WHERE:** %s
+
+%s
+%s
+    """ % (time_str, loc_str, topic_text, boilerplate)
+
+def message_html(time_str, loc_str, topic_text, boilerplate):
+    return markdown.markdown(full_markdown(time_str, loc_str, topic_text, boilerplate))
+
+def plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, topic_text, boilerplate):
+    return "%s\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
+            message_plaintext(time_str, loc_str, topic_text, boilerplate))
+
+def markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, topic_text, boilerplate):
+    return "__%s__\n\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
+            message_markdown(time_str, loc_str, topic_text, boilerplate))
+
+def html_with_title(topic, meetup_name, date_str, time_str, loc_str, topic_text, boilerplate):
+    return markdown.markdown(markdown_with_title(gen_title_with_date(topic, meetup_name, date_str),
+        message_markdown(time_str, loc_str, topic_text, boilerplate)))
+
+
 
 
 def lw2_title(topic, config):
@@ -362,28 +395,10 @@ def email_pieces(topic, config):
     date = next_meetup_date(config)
     location = config.get("location")
     when_str = gen_time(18, 15) # make this config later
-    plain_email = _email_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
-    html_email = _email_html(when_str, location.get("str"), topic_text, boilerplate)
+    plain_email = message_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
+    html_email = message_html(when_str, location.get("str"), topic_text, boilerplate)
     email_title = _email_title(topic_title, config, date)
     return (email_title, plain_email, html_email)
-
-# MARK to MARKDOWN
-def _email_plaintext(time_str, loc_str, topic_text, boilerplate):
-    return """WHEN: %s
-WHERE: %s
-
-%s
-%s
-    """ % (time_str, loc_str, topic_text, boilerplate)
-
-def _email_html(time_str, loc_str, topic_text, boilerplate):
-    return markdown.markdown("""**WHEN:** %s
-
-**WHERE:** %s
-
-%s
-%s
-    """ % (time_str, loc_str, topic_text, boilerplate))
 
 def _email_title(topic, config, date_obj):
     return gen_title_with_date(topic, config.get("meetup_name"), date_obj.isoformat())
