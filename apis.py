@@ -77,7 +77,8 @@ def gen_title(topic, meetup_name):
     return "%s: %s" % (meetup_name, topic_title)
 
 def gen_title_with_date(topic, meetup_name, date_str):
-    return "%s: %s: %s" % (meetup_name, date_str, topic)
+    topic_title = load_text_title(topic).strip()
+    return "%s: %s: %s" % (meetup_name, date_str, topic_title)
 
 def gen_time(hour24, minute):
     if hour24 > 12:
@@ -548,7 +549,7 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
         coerced_boil = boil_input.strip().lower()
         if coerced_boil == "y" or coerced_boil == "yes":
             boil = True
-        elif coerced_boil == "n" or coerced_boil == "no":
+        elif coerced_boil == "n" or coerced_boil == "no" or coerced_boil == "":
             boil = False
         else:
             print("Didn't understand response, defaulting to no boilerplate")
