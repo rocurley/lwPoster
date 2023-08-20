@@ -112,12 +112,12 @@ def message_html(time_str, loc_str, topic_text, boilerplate):
     return markdown.markdown(message_markdown(time_str, loc_str, topic_text, boilerplate))
 
 def plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
-    topic_text, _ = load_text_and_plaintext_body(topic)
+    _, topic_plaintext = load_text_and_plaintext_body(topic)
     return "%s\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
-            message_plaintext(time_str, loc_str, topic_text, boilerplate))
+            message_plaintext(time_str, loc_str, topic_plaintext, boilerplate))
 
 def markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate):
-    _, topic_text = load_text_and_plaintext_body(topic)
+    topic_text, _ = load_text_and_plaintext_body(topic)
     return "__%s__\n\n%s" % (gen_title_with_date(topic, meetup_name, date_str),
             message_markdown(time_str, loc_str, topic_text, boilerplate))
 
@@ -444,7 +444,6 @@ def print_plaintext_meetup(topic, config, use_boilerplate):
     if use_boilerplate:
         boilerplate = load_boilerplate(config)
     topic_title = load_text_title(topic)
-    _, topic_plaintext = load_text_and_plaintext_body(topic)
     meetup_name = config.get("meetup_name")
     date_str = next_meetup_date(config)
     location = config.get("location")
