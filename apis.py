@@ -326,10 +326,16 @@ def email_pieces(topic, config):
         topic_title = f.read()
     with open("meetups/body/%s.md" % topic) as f:
         topic_text = f.read()
+        topic_plaintext = topic_text
+    try:
+        with open("meetups/plainbody/%s.md" % topic) as f:
+            topic_plaintext = f.read()
+    except IOError:
+        topic_plaintext = topic_text
     date = next_meetup_date(config)
     location = config.get("location")
     when_str = date.strftime("%d %B %Y, 6:15 PM")
-    plain_email = _email_plaintext(when_str, location.get("str"), topic_text, boilerplate)
+    plain_email = _email_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
     html_email = _email_html(when_str, location.get("str"), topic_text, boilerplate)
     email_title = _email_title(topic_title, config, date)
     return (email_title, plain_email, html_email)
@@ -540,4 +546,4 @@ if __name__ == "__main__":
     cfg = config()
     topic = input("enter topic name: ")
     host = input("enter short name for location: ")
-    post(cfg, topic, host, skip={"fb": True, "ssc": True})
+    post(cfg, topic, host, skip={"fb": True, "ssc": True, "lw": True})
