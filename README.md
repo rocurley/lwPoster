@@ -1,16 +1,13 @@
 # lwPoster
 ### Automatically post Less Wrong meetups
 
-`apis.py` has a function `post` that will automatically post a Less Wrong meetup to:
-* lesswrong.com
-* facebook
-* The [SSC meetups repo](https://github.com/ssc-meetups-community/meetups)
-* An email list
+Eventually will post meetup announcements by email, and to Facebook, Discord, and LessWrong itself. Currently in a partially working state; email posting and formatting a text announcement (in plain text and markdown) are working, Facebook support is next in the plan.
 
-I've made a slight attempt to make this usable by other people, but there's still some SF stuff hardcoded in there.
-It'll probably take some reading the code to be able to use this yourself.
-If you do that work, and do so in a way that will make it easier for the next person, please send me a PR.
+Usage: After downloading the repo:
+- configure `config.json` and/or `secrets.json` with information for your meetup site, login credentials, target email address for announcements, etc. (see `config_README.md`, `configEXAMPLE.json`, and `secretsEXAMPLE.json`)
+- If you have rotating topics, save the topic descriptions and titles in `/meetup/title` and `/meetup/body`. If not, you'll want to use topic `none`.
+- Update `boilerplate.md` to be a Markdown (or plain text) copy of your every-week meetup announcement
+- run the poster with `python apis.py`. Enter in your topic shortname (possibly `none`), then site shortname (as found in config/secrets), when prompted.
+- This should post to your target email and give you a text version you can use to post to unsupported platforms
 
-The SSC poster in particular is gnarly. It relies on having a the SSC meetups repo cloned in your working directory as `ssc-meetups`.
-You also need to insert a little tag thing into the SCC meetups list so the script can find your meetup,
-and need commit rights to the repo. I think they're going to replace this pretty soon anyway so maybe just don't use the SSC part.
+If you put your site info into the checked-in files like `config.json` and are using it regularly, please check in your updates and send them as a Pull Request.
