@@ -63,13 +63,16 @@ def load_text_and_plaintext_body(topic):
 
 def gen_body(topic, config):
     boilerplate = load_boilerplate(config)
-    with open("meetups/body/%s.md" % topic) as f:
-        topic_text = f.read()
+    topic_text, _ = load_text_and_plaintext_body(topic)
     return "%s\n%s" % (topic_text, boilerplate)
 
+def gen_plaintext_body(topic, config):
+    boilerplate = load_boilerplate(config)
+    _, topic_plaintext = load_text_and_plaintext_body(topic)
+    return "%s\n%s" % (topic_plaintext, boilerplate)
+
 def gen_title(topic, meetup_name):
-    with open("meetups/title/%s.md" % topic) as f:
-        topic_title = f.read().strip()
+    topic_title = load_text_title(topic).strip()
     return "%s: %s" % (meetup_name, topic_title)
 
 def gen_title_with_date(topic, meetup_name, date_str):
