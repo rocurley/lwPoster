@@ -61,6 +61,7 @@ def load_text_and_plaintext_body(topic):
         topic_plaintext = topic_text
     return (topic_text, topic_plaintext)
 
+# MARK to MARKDOWN
 def gen_body(topic, config):
     boilerplate = load_boilerplate(config)
     topic_text, _ = load_text_and_plaintext_body(topic)
@@ -354,6 +355,7 @@ def email_pieces(topic, config):
     email_title = _email_title(topic_title, config, date)
     return (email_title, plain_email, html_email)
 
+# MARK to MARKDOWN
 def _email_plaintext(time_str, loc_str, topic_text, boilerplate):
     return """WHEN: %s
 WHERE: %s
@@ -468,6 +470,15 @@ def update_ssc_meetup(title, config, public, lw_url=None):
 
 
 
+def print_text_meetup(topic, config):
+    print("plain text not printed")
+
+def print_plaintext_meetup(topic, config):
+    print("markdow-formatted text not printed")
+
+
+
+
 def print_command(command, **kwargs):
     print(" ".join(command))
     p = Popen(command, stdout=PIPE, stderr=PIPE, **kwargs)
@@ -559,9 +570,9 @@ def post(config, topic, host, public=True, skip=None, lw_url=None):
         send_meetup_email(topic, config, gmail_username, toaddr)
         print("Email Sent")
     if "plaintext" not in skip:
-        print("plain text not printed")
+        print_text_meetup(topic, config)
     if "markdown" not in skip:
-        print("markdow-formatted text not printed")
+        print_plaintext_meetup(topic, config)
 
 if __name__ == "__main__":
     cfg = config()
