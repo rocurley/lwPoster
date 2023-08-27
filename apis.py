@@ -438,7 +438,11 @@ def print_text_meetup(topic, config, use_boilerplate):
     location = config.get("location")
     loc_str = location.get("str")
     time_str = gen_time(18, 15) # make this config later
-    print(markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
+    description = markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
+    print(description)
+    with open("description.txt", 'w') as f:
+        f.write(description)
+
 
 def print_plaintext_meetup(topic, config, use_boilerplate):
     boilerplate = ""
@@ -451,7 +455,10 @@ def print_plaintext_meetup(topic, config, use_boilerplate):
     location = config.get("location")
     loc_str = location.get("str")
     time_str = gen_time(18, 15) # make this config later
-    print(plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate))
+    description = plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
+    print(description)
+    with open("plaindescription.txt", 'w') as f:
+        f.write(description)
 
 
 
