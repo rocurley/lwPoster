@@ -1,0 +1,1 @@
+Bring a project (a website, a story, a knitting project, a business plan, or anything else...) and we'll co-work. At the beginning we'll each talk about what we're working on. You can choose to work on your own, or look to team up with others if you'd like to learn about their work or offer help. There's usually one room for quiet work and one for talking and collaboration.
