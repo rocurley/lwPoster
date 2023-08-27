@@ -61,7 +61,6 @@ def load_text_and_plaintext_body(topic):
         topic_plaintext = topic_text
     return (topic_text, topic_plaintext)
 
-# MARK to MARKDOWN
 def gen_body(topic, config):
     boilerplate = load_boilerplate(config)
     topic_text, _ = load_text_and_plaintext_body(topic)
@@ -398,11 +397,11 @@ def email_pieces(topic, config):
     when_str = gen_time(18, 15) # make this config later
     plain_email = message_plaintext(when_str, location.get("str"), topic_plaintext, boilerplate)
     html_email = message_html(when_str, location.get("str"), topic_text, boilerplate)
-    email_title = _email_title(topic_title, config, date)
+    email_title = _email_title(topic, config, date)
     return (email_title, plain_email, html_email)
 
 def _email_title(topic, config, date_obj):
-    return gen_title_with_date(topic, config.get("meetup_name"), date_obj.isoformat())
+    return gen_title_with_date(topic, config.get("meetup_name"), date_obj.strftime("%b %d"))
 
 def send_meetup_email(topic, config, gmail_username, toaddr):
     email_title, plaintext_email, html_email = email_pieces(topic, config)
@@ -434,7 +433,8 @@ def print_text_meetup(topic, config, use_boilerplate):
         boilerplate = load_boilerplate(config)
     topic_title = load_text_title(topic)
     meetup_name = config.get("meetup_name")
-    date_str = next_meetup_date(config)
+    date_obj = next_meetup_date(config)
+    date_str = date_obj.strftime("%B %d")
     location = config.get("location")
     loc_str = location.get("str")
     time_str = gen_time(18, 15) # make this config later
@@ -446,7 +446,8 @@ def print_plaintext_meetup(topic, config, use_boilerplate):
         boilerplate = load_boilerplate(config)
     topic_title = load_text_title(topic)
     meetup_name = config.get("meetup_name")
-    date_str = next_meetup_date(config)
+    date_obj = next_meetup_date(config)
+    date_str = date_obj.strftime("%B %d")
     location = config.get("location")
     loc_str = location.get("str")
     time_str = gen_time(18, 15) # make this config later
