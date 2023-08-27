@@ -571,4 +571,11 @@ if __name__ == "__main__":
     cfg = config()
     topic = input("enter topic name: ")
     host = input("enter short name for location: ")
-    post(cfg, topic, host, skip={"fb": True, "lw": True})
+    post(cfg, topic, host, skip={
+        "fb": True,
+        "lw": True,
+        # "discord": True,
+        # "email": True,
+        # "plaintext": True,
+        # "markdown": True,
+        })
