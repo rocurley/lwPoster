@@ -65,7 +65,7 @@ class TestNextMeetup(unittest.TestCase):
 
 class TestSharedFormatting(unittest.TestCase):
 
-    test_config = {
+    test_config = apis.PostingConfig.from_dict({
         "phone": "555 123 4567",
         "location":
         {
@@ -74,7 +74,7 @@ class TestSharedFormatting(unittest.TestCase):
         },
         "meetup_name": "LW For Dummy",
         "boilerplate_path": "test_boilerplate.md"
-    }
+    })
 
     def test_gen_body(self):
         expected_boilerplate = """
@@ -91,8 +91,7 @@ About: Some structure.
 
 
 class TestLWFormatting(unittest.TestCase):
-
-    test_config = {
+    test_config = apis.PostingConfig.from_dict({
         "phone": "555 123 4567",
         "location":
         {
@@ -101,7 +100,7 @@ class TestLWFormatting(unittest.TestCase):
         },
         "meetup_name": "LW For Dummy",
         "boilerplate_path": "test_boilerplate"
-    }
+    })
 
     def test_gen_title(self):
         self.assertEqual(
@@ -126,7 +125,7 @@ class TestLWFormatting(unittest.TestCase):
 
 class TestFBFormatting(unittest.TestCase):
 
-    test_config = {
+    test_config = apis.PostingConfig.from_dict({
         "phone": "555 123 4567",
         "location":
         {
@@ -137,7 +136,7 @@ class TestFBFormatting(unittest.TestCase):
         "fb_login_email": "dummy@gmail.com",
         "meetup_name": "LW For Dummy",
         "boilerplate_path": "test_boilerplate.md"
-    }
+    })
 
     def test_titles(self):
         _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", self.test_config)
