@@ -81,7 +81,9 @@ def next_meetup_date_testable(config, dt):
     d = dt.date()
     if dt.time() > datetime.time(hour=18): # if it's 6 PM or later
         d += datetime.timedelta(days=1) # then don't schedule it for today
-    day_number = config.get_default("weekday_number", 0)
+    day_number = config.get("weekday_number")
+    if day_number is None:
+        raise Exception("Day of the week must be specified")
     return next_weekday(d, day_number)
 
 def next_weekday(d, weekday):
