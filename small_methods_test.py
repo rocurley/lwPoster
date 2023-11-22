@@ -133,6 +133,7 @@ class TestFBFormatting(unittest.TestCase):
             "instructions": "Buzz for H. Celine or enter code 893",
             "phone": "555 987 6543"
         },
+        "weekday_number": 2,
         "email": "dummy@gmail.com",
         "fb_login_email": "dummy@gmail.com",
         "meetup_name": "LW For Dummy",
@@ -142,9 +143,10 @@ class TestFBFormatting(unittest.TestCase):
     def test_titles(self):
         _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", self.test_config)
         self.assertEqual(title, "LW For Dummy: Reading & Discussion")
-        fuller_config = json.loads(json.dumps(self.test_config))
+        fuller_config = json.loads(json.dumps(self.test_config.secret))
         fuller_config["fb_meetup_name"] = "Real LW Meetup"
-        _, title, _, _, _, _ = apis.fb_meetup_attrs("reading", fuller_config)
+        _, title, _, _, _, _ = apis.fb_meetup_attrs("reading",
+                apis.PostingConfig.from_dict(fuller_config))
         self.assertEqual(title, "Real LW Meetup: Reading & Discussion")
 
 
