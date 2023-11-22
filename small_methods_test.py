@@ -8,20 +8,20 @@ class TestNextWeekday(unittest.TestCase):
 
     def test_monday_tuesday(self):
         monday_noon = datetime.datetime(2023, 5, 1, 12, 0, 0) # May 1 2023 is a Monday
-        target_number = 1 # Tuesday
+        target_number = 2 # Tuesday
         tuesday_noon = datetime.datetime(2023, 5, 2, 12, 0, 0) # 24 hours later exactly
         self.assertEqual(apis.next_weekday(monday_noon, target_number), tuesday_noon)
 
     def test_tuesday_monday(self):
         tuesday_noon = datetime.datetime(2023, 5, 2, 12, 0, 0) #May 2 2023 is a Tuesday
         next_monday_noon = datetime.datetime(2023, 5, 8, 12, 0, 0) # 6*24 hours later exactly
-        target_number = 0 # Monday
+        target_number = 1 # Monday
         self.assertEqual(apis.next_weekday(tuesday_noon, target_number), next_monday_noon)
 
     def test_tuesday_saturday(self):
         tuesday_noon = datetime.datetime(2023, 5, 2, 12, 0, 0) #May 2 2023 is a Tuesday
         next_saturday_noon = datetime.datetime(2023, 5, 6, 12, 0, 0) # 4*24 hours later exactly
-        target_number = 5 # Monday
+        target_number = 6 # Saturday
         self.assertEqual(apis.next_weekday(tuesday_noon, target_number), next_saturday_noon)
 
 class TestNextMeetup(unittest.TestCase):
