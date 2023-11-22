@@ -110,16 +110,17 @@ class TestLWFormatting(unittest.TestCase):
 
     def test_gen_real_body(self):
         # Make this more like a real config
-        config = json.loads(json.dumps(self.test_config))
-        del config["boilerplate_path"]
-        del config["location"]["phone"]
-        config["phone"] = "${phone}"
+        new_config = json.loads(json.dumps(self.test_config.secret))
+        del new_config["boilerplate_path"]
+        del new_config["location"]["phone"]
+        new_config["phone"] = "${phone}"
+        config = apis.PostingConfig.from_dict(new_config)
 
         with open("meetups/body/reading.md") as f:
             topic_text = f.read()
         with open("boilerplate.md") as f:
             boilerplate = f.read()
-        expected = topic_text+"\n"+config["location"]["instructions"]+"\n"+boilerplate
+        expected = topic_text+"\n"+new_config["location"]["instructions"]+"\n"+boilerplate
         self.maxDiff = None
         self.assertEqual(apis.lw2_body("reading", config), expected)
 
