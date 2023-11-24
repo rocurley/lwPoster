@@ -87,7 +87,8 @@ def next_meetup_date_testable(config, dt):
     return next_weekday(d, day_number)
 
 def next_weekday(d, weekday):
-    days_ahead = weekday - d.weekday()
+    target_day = d.weekday()+1
+    days_ahead = weekday - target_day
     if days_ahead < 0:  # Target day already happened this week
         days_ahead += 7
     return d + datetime.timedelta(days_ahead)
