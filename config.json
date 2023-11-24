@@ -4,7 +4,7 @@
     "group_id":"v7dn9rTWLcK5Tcy9f",
     "fb_meetup_name": "North Oakland Less Wrong Meetup",
     "meetup_name": "North Oakland Meetup",
-    "weekday_name": {"value": "Monday", "comment": "number is the source of truth. monday is 1, tuesday 2,  etc., sunday is 7"},
+    "weekday_name": {"value": "Monday", "comment": "weekday_number is the source of truth. Monday is 1, Tuesday 2,  etc., Sunday is 7"},
     "weekday_number": 2,
     "locations": {
         "Lighthaven":{
