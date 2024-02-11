@@ -500,7 +500,7 @@ def print_text_meetup(topic, config, use_boilerplate):
     date_str = date_obj.strftime("%B %d")
     location = config.get("location")
     loc_str = location.get("str")
-    time_str = gen_time(18, 15) # make this config later
+    time_str = "%s - %s" % (gen_time(18, 15), gen_time(22, 00)) # make this config later
     description = markdown_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
     print(description)
     with open("description.txt", 'w') as f:
@@ -517,7 +517,7 @@ def print_plaintext_meetup(topic, config, use_boilerplate):
     date_str = date_obj.strftime("%B %d")
     location = config.get("location")
     loc_str = location.get("str")
-    time_str = gen_time(18, 15) # make this config later
+    time_str = "%s - %s" % (gen_time(18, 15), gen_time(22, 00)) # make this config later
     description = plaintext_with_title(topic, meetup_name, date_str, time_str, loc_str, boilerplate)
     print(description)
     with open("plaindescription.txt", 'w') as f:
