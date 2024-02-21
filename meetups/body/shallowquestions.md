@@ -1,0 +1,1 @@
+We'll be doing quick rotating rounds where you spend 5 minutes answering simple questions in excessive detail. We'll have a couple of conversational prompts to help out, but it won't be too structured; the goal is to just get familiar with a lot of individual faces at the meetup group.
